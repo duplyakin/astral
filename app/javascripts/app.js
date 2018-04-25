@@ -71,7 +71,7 @@ window.App = {
     var kind = document.getElementById("creatorname").value;
     MyStorage.deployed().then(function(instance) {
       meta = instance;
-      return meta.getLatestCreatorVersion.call(kind, {from: account});
+      return meta.getLatestCreator.call(kind, {from: account});
     }).then(function(value) {
       var creatordata = document.getElementById("creatordata");
         console.log(value);
