@@ -7,10 +7,10 @@ import { default as contract } from 'truffle-contract'
 
 // Import our contract artifacts and turn them into usable abstractions.
 import metacoin_artifacts from '../../build/contracts/MetaCoin.json'
-  //import myStorage from '../../build/contracts/Storage");
+import myStorage_artifacts from '../../build/contracts/Storage.json'
 // MetaCoin is our usable abstraction, which we'll use through the code below.
 var MetaCoin = contract(metacoin_artifacts);
-
+var MyStorage = contract(myStorage_artifacts);
 // The following code is simple to show off interacting with your contracts.
 // As your needs grow you will likely need to change its form and structure.
 // For application bootstrapping, check out window.addEventListener below.
@@ -23,7 +23,7 @@ window.App = {
 
     // Bootstrap the MetaCoin abstraction for Use.
     MetaCoin.setProvider(web3.currentProvider);
-
+    MyStorage.setProvider(web3.currentProvider);
     // Get the initial account balance so it can be displayed.
     web3.eth.getAccounts(function(err, accs) {
       if (err != null) {
@@ -61,6 +61,24 @@ window.App = {
     }).catch(function(e) {
       console.log(e);
       self.setStatus("Error getting balance; see log.");
+    });
+  },
+
+
+  getCreator:function() {
+    var self = this;
+    var meta;
+    var kind = document.getElementById("creatorname").value;
+    MyStorage.deployed().then(function(instance) {
+      meta = instance;
+      return meta.getLatestCreatorVersion.call(kind, {from: account});
+    }).then(function(value) {
+      var creatordata = document.getElementById("creatordata");
+        console.log(value);
+      creatordata.innerHTML = value.valueOf();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error getting creator; see log.");
     });
   },
 
