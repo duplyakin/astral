@@ -19,11 +19,80 @@
   <span id="status"></span>
 
   <br>
-  <h1>Get Creator</h1>
+  <h1>Get Creator by version</h1>
+  <br><label for="creatorversion">Version:</label><input type="text" id="version" placeholder="e.g., 95"></input>
+  <br><br><button id="getCreatorByVersion" onclick="App.getCreatorByVersion()">Do it </button>
+  <br><br>
+  <span id="baseholderdata"></span>
+
+  <br>
+  <h1>Get Latest Creator</h1>
+  <br><br><button id="getLatestCreator" onclick="App.getLatestCreator()">Do it </button>
+  <br><br>
+  <span id="baseholderdata1"></span>
+
+  <br>
+  <h1>Get Creator Storage</h1>
   <br><label for="creatorname">Name:</label><input type="text" id="creatorname" placeholder="e.g., 95"></input>
   <br><br><button id="getCreator" onclick="App.getCreator()">Do it </button>
   <br><br>
   <span id="creatordata"></span>
+
+  <br>
+  <h1>Get owner of document</h1>
+  <br><label for="ownerAddress">owner address:</label><input type="text" id="ownerAddress" placeholder="e.g., 95"></input>
+  <br><br><button id="getOwner" onclick="App.getOwner()">Do it </button>
+  <br><br>
+  <span id="documentdata1"></span>
+
+  <br>
+  <h1>Create same contract for new owner</h1>
+  <br><label for="newOwnerAddress">new owner address:</label><input type="text" id="newOwnerAddress" placeholder="e.g., 95"></input>
+  <br><br><button id="wantSameContract" onclick="App.wantSameContract()">Do it </button>
+  <br><br>
+  <span id="documentdata2"></span>
+
+  <br>
+  <h1>Set Token Name</h1>
+  <br><label for="name">token name:</label><input type="text" id="name" placeholder="e.g., 95"></input>
+  <br><br><button id="setName" onclick="App.setName()">Do it </button>
+  <br><br>
+  <span id="sampleTokenBuilder1"></span>
+
+  <br>
+  <h1>Set Token Symbol</h1>
+  <br><label for="symbol">token symbol:</label><input type="text" id="symbol" placeholder="e.g., 95"></input>
+  <br><br><button id="setSymbol" onclick="App.setSymbol()">Do it </button>
+  <br><br>
+  <span id="sampleTokenBuilder2"></span>
+
+  <br>
+  <h1>Set Token decimals</h1>
+  <br><label for="decimals">token decimals:</label><input type="text" id="decimals" placeholder="e.g., 95"></input>
+  <br><br><button id="setDecimals" onclick="App.setDecimals()">Do it </button>
+  <br><br>
+  <span id="sampleTokenBuilder3"></span>
+
+  <br>
+  <h1>Set Token for crowdsale</h1>
+  <br><label for="token">set token:</label><input type="text" id="token" placeholder="e.g., 95"></input>
+  <br><br><button id="setToken" onclick="App.setToken()">Do it </button>
+  <br><br>
+  <span id="IncreasingPriceCrowdsaleBuilder1"></span>
+
+  <br>
+  <h1>Set wallet for crowdsale</h1>
+  <br><label for="wallet">set wallet:</label><input type="text" id="wallet" placeholder="e.g., 95"></input>
+  <br><br><button id="setWallet" onclick="App.setWallet()">Do it </button>
+  <br><br>
+  <span id="IncreasingPriceCrowdsaleBuilder2"></span>
+
+  <br>
+  <h1>Set Opening Time for crowdsale</h1>
+  <br><label for="openingTime">set opening time:</label><input type="text" id="openingTime" placeholder="e.g., 95"></input>
+  <br><br><button id="setOpeningTime" onclick="App.setOpeningTime()">Do it </button>
+  <br><br>
+  <span id="IncreasingPriceCrowdsaleBuilder3"></span>
 
   <br>
   <span class="hint"><strong>Hint:</strong> open the browser developer console to view any errors and warnings.</span>

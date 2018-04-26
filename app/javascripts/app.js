@@ -8,9 +8,31 @@ import { default as contract } from 'truffle-contract'
 // Import our contract artifacts and turn them into usable abstractions.
 import metacoin_artifacts from '../../build/contracts/MetaCoin.json'
 import myStorage_artifacts from '../../build/contracts/Storage.json'
+import iBaseHolder_artifacts from '../../build/contracts/iBaseHolder.json'
+import iDocumentBuilder_artifacts from '../../build/contracts/iDocumentBuilder.json'
+import iCreator_artifacts from '../../build/contracts/iCreator.json'
+import iDocument_artifacts from '../../build/contracts/iDocument.json'
+import SampleToken_artifacts from '../../build/contracts/SampleToken.json'
+import SampleTokenBuilder_artifacts from '../../build/contracts/SampleTokenBuilder.json'
+import SampleTokenCreator_artifacts from '../../build/contracts/SampleTokenCreator.json'
+
+import IncreasingPriceCrowdsale_artifacts from '../../build/contracts/IncreasingPriceCrowdsale.json'
+import IncreasingPriceCrowdsaleBuilder_artifacts from '../../build/contracts/IncreasingPriceCrowdsaleBuilder.json'
+import IncreasingPriceCrowdsaleCreator_artifacts from '../../build/contracts/IncreasingPriceCrowdsaleCreator.json'
 // MetaCoin is our usable abstraction, which we'll use through the code below.
 var MetaCoin = contract(metacoin_artifacts);
 var MyStorage = contract(myStorage_artifacts);
+var iBaseHolder = artifacts.require(iBaseHolder_artifacts);
+var iDocumentBuilder = artifacts.require(iDocumentBuilder_artifacts);
+var iCreator = artifacts.require(iCreator_artifacts);
+var iDocument = artifacts.require(iDocument_artifacts);
+var SampleToken = artifacts.require(SampleToken_artifacts);
+var SampleTokenBuilder =  artifacts.require(SampleTokenBuilder_artifacts);
+var SampleTokenCreator = artifacts.require(SampleTokenCreator_artifacts);
+
+var IncreasingPriceCrowdsale = artifacts.require(IncreasingPriceCrowdsale_artifacts);
+var IncreasingPriceCrowdsaleBuilder =  artifacts.require(IncreasingPriceCrowdsaleBuilder_artifacts);
+var IncreasingPriceCrowdsaleCreator = artifacts.require(IncreasingPriceCrowdsaleCreator_artifacts);
 // The following code is simple to show off interacting with your contracts.
 // As your needs grow you will likely need to change its form and structure.
 // For application bootstrapping, check out window.addEventListener below.
@@ -24,6 +46,17 @@ window.App = {
     // Bootstrap the MetaCoin abstraction for Use.
     MetaCoin.setProvider(web3.currentProvider);
     MyStorage.setProvider(web3.currentProvider);
+	  iBaseHolder.setProvider(web3.currentProvider);
+	  iDocumentBuilder.setProvider(web3.currentProvider)
+	  iCreator.setProvider(web3.currentProvider);
+    SampleToken.setProvider(web3.currentProvider);
+    SampleTokenBuilder.setProvider(web3.currentProvider);
+    SampleTokenCreator.setProvider(web3.currentProvider);
+
+    IncreasingPriceCrowdsale.setProvider(web3.currentProvider);
+    IncreasingPriceCrowdsaleBuilder.setProvider(web3.currentProvider);
+    IncreasingPriceCrowdsaleCreator.setProvider(web3.currentProvider);
+
     // Get the initial account balance so it can be displayed.
     web3.eth.getAccounts(function(err, accs) {
       if (err != null) {
@@ -64,8 +97,41 @@ window.App = {
     });
   },
 
+  getCreatorByVersion: function() {
+    var self = this;
+    var meta;
+    var kind = document.getElementById("version").value;
+    iBaseHolder.deployed().then(function(instance) {
+      meta = instance;
+      return meta.getCreator.call(kind, {from: account});
+    }).then(function(value) {
+      var baseholderdata = document.getElementById("baseholderdata");
+        console.log(value);
+      baseholderdata.innerHTML = value.valueOf();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error getting creator by version; see log.");
+    });
+  },
 
-  getCreator:function() {
+  getLatestCreator:function() {
+    var self = this;
+    var meta;
+    iBaseHolder.deployed().then(function(instance) {
+      meta = instance;
+      return meta.getLatestCreator.call({from: account});
+    }).then(function(value) {
+      var baseholderdata1 = document.getElementById("baseholderdata1");
+        console.log(value);
+      baseholderdata1.innerHTML = value.valueOf();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error getting creator by version; see log.");
+    });
+  },
+
+
+  getCreator: function() {
     var self = this;
     var meta;
     var kind = document.getElementById("creatorname").value;
@@ -79,6 +145,142 @@ window.App = {
     }).catch(function(e) {
       console.log(e);
       self.setStatus("Error getting creator; see log.");
+    });
+  },
+
+  getOwner: function() {
+    var self = this;
+    var meta;
+    var kind = document.getElementById("ownerAddress").value;
+    iDocument.deployed().then(function(instance) {
+      meta = instance;
+      return meta.getOwner.call(kind, {from: account});
+    }).then(function(value) {
+      var documentdata1 = document.getElementById("documentdata1");
+        console.log(value);
+      documentdata1.innerHTML = value.valueOf();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error getting owner; see log.");
+    });
+  },
+
+  wantSameContract: function() {
+    var self = this;
+    var meta;
+    var kind = document.getElementById("newOwnerAddress").value;
+    iDocument.deployed().then(function(instance) {
+      meta = instance;
+      return meta.wantSameContract.call(kind, {from: account});
+    }).then(function(value) {
+      var documentdata2 = document.getElementById("documentdata2");
+        console.log(value);
+      documentdata2.innerHTML = value.valueOf();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error making the same contract for new owner; see log.");
+    });
+  },
+
+  setName: function() {
+    var self = this;
+    var meta;
+    var kind = document.getElementById("name").value;
+    iDocument.deployed().then(function(instance) {
+      meta = instance;
+      return meta.setName.call(kind, {from: account});
+    }).then(function(value) {
+      var sampleTokenBuilder1 = document.getElementById("sampleTokenBuilder1");
+        console.log(value);
+      sampleTokenBuilder1.innerHTML = value.valueOf();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error making the same contract for new owner; see log.");
+    });
+  },
+
+  setSymbol: function() {
+    var self = this;
+    var meta;
+    var kind = document.getElementById("symbol").value;
+    iDocument.deployed().then(function(instance) {
+      meta = instance;
+      return meta.setSymbol.call(kind, {from: account});
+    }).then(function(value) {
+      var sampleTokenBuilder2 = document.getElementById("sampleTokenBuilder2");
+        console.log(value);
+      sampleTokenBuilder2.innerHTML = value.valueOf();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error making the same contract for new owner; see log.");
+    });
+  },
+
+  setDecimals: function() {
+    var self = this;
+    var meta;
+    var kind = document.getElementById("decimals").value;
+    iDocument.deployed().then(function(instance) {
+      meta = instance;
+      return meta.setDecimals.call(kind, {from: account});
+    }).then(function(value) {
+      var sampleTokenBuilder3 = document.getElementById("sampleTokenBuilder3");
+        console.log(value);
+      sampleTokenBuilder3.innerHTML = value.valueOf();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error making the same contract for new owner; see log.");
+    });
+  },
+
+  setName: function() {
+    var self = this;
+    var meta;
+    var kind = document.getElementById("token").value;
+    iDocument.deployed().then(function(instance) {
+      meta = instance;
+      return meta.setToken.call(kind, {from: account});
+    }).then(function(value) {
+      var IncreasingPriceCrowdsaleBuilder1 = document.getElementById("IncreasingPriceCrowdsaleBuilder1");
+        console.log(value);
+      IncreasingPriceCrowdsaleBuilder1.innerHTML = value.valueOf();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error making the same contract for new owner; see log.");
+    });
+  },
+
+  setSymbol: function() {
+    var self = this;
+    var meta;
+    var kind = document.getElementById("wallet").value;
+    iDocument.deployed().then(function(instance) {
+      meta = instance;
+      return meta.setWallet.call(kind, {from: account});
+    }).then(function(value) {
+      var IncreasingPriceCrowdsaleBuilder2 = document.getElementById("IncreasingPriceCrowdsaleBuilder2");
+        console.log(value);
+      IncreasingPriceCrowdsaleBuilder2.innerHTML = value.valueOf();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error making the same contract for new owner; see log.");
+    });
+  },
+
+  setDecimals: function() {
+    var self = this;
+    var meta;
+    var kind = document.getElementById("openingTime").value;
+    iDocument.deployed().then(function(instance) {
+      meta = instance;
+      return meta.setOpeningTime.call(kind, {from: account});
+    }).then(function(value) {
+      var IncreasingPriceCrowdsaleBuilder3 = document.getElementById("IncreasingPriceCrowdsaleBuilder3");
+        console.log(value);
+      IncreasingPriceCrowdsaleBuilder3.innerHTML = value.valueOf();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error making the same contract for new owner; see log.");
     });
   },
 
