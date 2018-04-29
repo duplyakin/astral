@@ -38,6 +38,7 @@ contract iBaseHolder{
     }
 
     mapping (uint64 => address) iCreators;
+    mapping (uint64 => bytes) contractAbi;
     mapping (uint64 => mapping (address => address)) allDocuments;
 
     uint64 private newestVersion;
@@ -48,9 +49,12 @@ contract iBaseHolder{
         crt.setHolder(this);
         iCreators[_creatorVersion]=crt;
         newestVersion=_creatorVersion;
+    }
+    function updateAbi(uint64 version,bytes abi) public {
+
+        contractAbi[version]=abi;
 
     }
-
     function getCreator(uint64 version) public view  returns (iCreator _creator){
         require(version<=newestVersion/*,'no creator for that version, it\'s unimplemented yet'*/);
         _creator =iCreator( iCreators[version]);

@@ -1,3 +1,6 @@
+var fs = require('fs');
+var console =require('console')
+
 
 module.exports = function(deployer, network, accounts) {
 
@@ -38,7 +41,13 @@ module.exports = function(deployer, network, accounts) {
   return SampleTokenCreator.new(holder.address,1, { from: accounts[0]});
 
 }).then(function(instance) {
-  return holder.updateCreator(instance.address);
+
+  return holder.updateCreator(instance.address, { from: accounts[0]});
+}).then(function() {
+  var tokenAbi=fs.readFileSync('./build/contracts/SampleToken.json', 'utf8');
+  var obj =JSON.stringify(JSON.parse(tokenAbi).abi);
+  console.log(obj.length+" "+obj);
+  return  holder.updateAbi(1,obj, { from: accounts[0]});
 }).then(function() {
   return icoBaseHolder.new( { from: accounts[0]})
 }).then(function(instance) {
@@ -47,7 +56,12 @@ module.exports = function(deployer, network, accounts) {
 }).then(function() {
   return    IncreasingPriceCrowdsaleCreator.new(icoHolder.address,1, { from: accounts[0]});
 }).then(function(instance) {
-  return icoHolder.updateCreator(instance.address);
+    return icoHolder.updateCreator(instance.address, { from: accounts[0],gasLimit:2000000});
+}).then(function() {
+  var tokenAbi=fs.readFileSync('./build/contracts/IncreasingPriceCrowdsale.json', 'utf8');
+  var obj =JSON.stringify(JSON.parse(tokenAbi).abi);
+    console.log(obj.length+" "+obj);
+  return  icoHolder.updateAbi(1,obj, { from: accounts[0],gasLimit:2000000});
 });
 
 

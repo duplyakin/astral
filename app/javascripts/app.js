@@ -42,6 +42,17 @@ var IncreasingPriceCrowdsaleCreator = contract(IncreasingPriceCrowdsaleCreator_a
 var accounts;
 var account;
 
+function getMethods(obj)
+{
+    var res = [];
+    for(var m in obj) {
+        if(typeof obj[m] == "function") {
+            res.push(m)
+        }
+    }
+    return res;
+};
+
 window.App = {
   start: function() {
     var self = this;
