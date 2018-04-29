@@ -62,7 +62,9 @@ window.App = {
     IncreasingPriceCrowdsale.setProvider(web3.currentProvider);
     IncreasingPriceCrowdsaleBuilder.setProvider(web3.currentProvider);
     IncreasingPriceCrowdsaleCreator.setProvider(web3.currentProvider);
-    getCreator: function() {
+},
+
+    getCreator:function(){
       var self = this;
       var meta;
       var kind = document.getElementById("creatorname").value;
