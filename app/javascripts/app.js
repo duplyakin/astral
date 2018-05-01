@@ -79,8 +79,9 @@ window.App = {
       var self = this;
       var meta;
       var kind = document.getElementById("creatorname").value;
-      MyStorage.deployed().then(function(instance) {
+       var dep=MyStorage.deployed().then(function(instance) {
         meta = instance;
+          console.log(meta);
         return meta.getLatestCreator.call(kind, {from: account});
       }).then(function(value) {
         //iCreator.address=value.address;
@@ -92,7 +93,7 @@ window.App = {
         var res = getMethods(crt);
         var html = "";
       res.foreach(function(m,i,res){
-          creatordata.innerHTML.add(`<button name="`+m+`"></button>`);
+          creatordata.innerHTML.add(`<br><button name="`+m+`"></button><br>`);
 
         });
           //creatordata.innerHTML = value.valueOf();
@@ -263,9 +264,9 @@ window.addEventListener('load', function() {
     // Use Mist/MetaMask's provider
     window.web3 = new Web3(web3.currentProvider);
   } else {
-    console.warn("No web3 detected. Falling back to http://127.0.0.1:9545. You should remove this fallback when you deploy live, as it's inherently insecure. Consider switching to Metamask for development. More info here: http://truffleframework.com/tutorials/truffle-and-metamask");
+    console.warn("No web3 detected. Falling back to http://127.0.0.1:8545. You should remove this fallback when you deploy live, as it's inherently insecure. Consider switching to Metamask for development. More info here: http://truffleframework.com/tutorials/truffle-and-metamask");
     // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
-    window.web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:9545"));
+    window.web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:8545"));
   }
 
   App.start();
