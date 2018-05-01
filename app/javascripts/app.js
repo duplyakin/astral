@@ -83,10 +83,21 @@ window.App = {
         meta = instance;
         return meta.getLatestCreator.call(kind, {from: account});
       }).then(function(value) {
+        //iCreator.address=value.address;
+        return iCreator.at(value.address);
+      }).then(function(crt) {
         var creatordata = document.getElementById("creatordata");
-          console.log(value);
-        creatordata.innerHTML = value.valueOf();
-        //return iCreator.at(value);
+          console.log(crt);
+
+        var res = getMethods(crt);
+        var html = "";
+      res.foreach(function(m,i,res){
+          creatordata.innerHTML.add(`<button name="`+m+`"></button>`);
+
+        });
+          //creatordata.innerHTML = value.valueOf();
+        //iCreator.address=value.address;
+      //  return iCreator.at(value);
       }).catch(function(e) {
         console.log(e);
         self.setStatus("Error getting creator; see log.");
@@ -110,7 +121,7 @@ window.App = {
     });
   },*/
 
-  setName: function() {
+/*  setName: function() {
     var self = this;
     var meta;
     var kind = document.getElementById("creatorname").value;
@@ -171,7 +182,7 @@ window.App = {
       self.setStatus("Error making the same contract for new owner; see log.");
     });
   },
-
+*/
 /*  setName: function() {
     var self = this;
     var meta;

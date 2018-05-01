@@ -1,6 +1,12 @@
 var fs = require('fs');
 var console =require('console')
 
+function getAbi(filename){
+  var tokenAbi=fs.readFileSync(filename, 'utf8');
+  var obj =JSON.stringify(JSON.parse(tokenAbi).abi);
+  console.log(obj.length+" "+obj);
+  return obj;
+}
 
 module.exports = function(deployer, network, accounts) {
 
@@ -25,6 +31,7 @@ module.exports = function(deployer, network, accounts) {
 
   var storage,holder;
   var stc;
+  var tokenCreator;
   var icoHolder,icoCreator;
   deployer.then(function() {
   return myStorage.deployed();
@@ -41,13 +48,12 @@ module.exports = function(deployer, network, accounts) {
   return SampleTokenCreator.new(holder.address,1, { from: accounts[0]});
 
 }).then(function(instance) {
-
+  tokenCreator=instance;
   return holder.updateCreator(instance.address, { from: accounts[0]});
 }).then(function() {
-  var tokenAbi=fs.readFileSync('./build/contracts/SampleToken.json', 'utf8');
-  var obj =JSON.stringify(JSON.parse(tokenAbi).abi);
-  console.log(obj.length+" "+obj);
-  return  holder.updateAbi(1,obj, { from: accounts[0]});
+  return  holder.updateAbi(1,getAbi('./build/contracts/SampleToken.json'), { from: accounts[0]});
+}).then(function() {
+  return  tokenCreator.setBuilderAbi(getAbi('./build/contracts/SampleTokenBuilder.json'), { from: accounts[0]});
 }).then(function() {
   return icoBaseHolder.new( { from: accounts[0]})
 }).then(function(instance) {
@@ -56,12 +62,12 @@ module.exports = function(deployer, network, accounts) {
 }).then(function() {
   return    IncreasingPriceCrowdsaleCreator.new(icoHolder.address,1, { from: accounts[0]});
 }).then(function(instance) {
+  icoCreator=instance;
     return icoHolder.updateCreator(instance.address, { from: accounts[0],gasLimit:2000000});
 }).then(function() {
-  var tokenAbi=fs.readFileSync('./build/contracts/IncreasingPriceCrowdsale.json', 'utf8');
-  var obj =JSON.stringify(JSON.parse(tokenAbi).abi);
-    console.log(obj.length+" "+obj);
-  return  icoHolder.updateAbi(1,obj, { from: accounts[0],gasLimit:2000000});
+  return  icoHolder.updateAbi(1,getAbi('./build/contracts/IncreasingPriceCrowdsale.json'), { from: accounts[0],gasLimit:2000000});
+}).then(function() {
+  return  icoCreator.setBuilderAbi(getAbi('./build/contracts/IncreasingPriceCrowdsaleBuilder.json'), { from: accounts[0],gasLimit:2000000});
 });
 
 

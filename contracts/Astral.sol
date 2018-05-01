@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.22;
 
 
 import "../node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol";
@@ -55,6 +55,12 @@ contract iBaseHolder{
         contractAbi[version]=abi;
 
     }
+    function getAbi(uint64 version) public view returns (bytes){
+
+      return contractAbi[version];
+
+    }
+
     function getCreator(uint64 version) public view  returns (iCreator _creator){
         require(version<=newestVersion/*,'no creator for that version, it\'s unimplemented yet'*/);
         _creator =iCreator( iCreators[version]);
@@ -122,15 +128,27 @@ contract iDocumentBuilder is Ownable {
 
 }
 // this class should be only one for contract version
-contract iCreator is iVersionable{
+contract iCreator is iVersionable, Ownable {
 
+     bytes private builderAbi ;
     function iCreator(iBaseHolder _holder,uint64 version)public iVersionable(_holder,version){
-
+        owner = msg.sender;
     }
 
     function createDocumentBuilder(address _curator ) public returns (iDocumentBuilder _newDocumentBuilder) {
         _newDocumentBuilder = new iDocumentBuilder(_curator,this);
 
+    }
+    function setBuilderAbi(bytes myabi) public {
+      builderAbi=myabi;
+    }
+    function getDocumentBuilderAbi() public view returns (bytes myabi){
+
+      return builderAbi;
+    }
+    function getDocumentAbi() public view returns (bytes myabi){
+      myabi= holder.getAbi(getVersion());
+    //  return abi;
     }
 }
 
