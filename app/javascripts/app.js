@@ -85,17 +85,19 @@ window.App = {
         return meta.getLatestCreator.call(kind, {from: account});
       }).then(function(value) {
         //iCreator.address=value.address;
-        return iCreator.at(value.address);
+        return iCreator.at(value);
       }).then(function(crt) {
         var creatordata = document.getElementById("creatordata");
           console.log(crt);
 
         var res = getMethods(crt);
         var html = "";
-      res.foreach(function(m,i,res){
-          creatordata.innerHTML.add(`<br><button name="`+m+`"></button><br>`);
+        res.forEach(function(m,i,res){
+            html+=`<br><button >`+m+`</button><br>`;
 
-        });
+          });
+           creatordata.innerHTML=html;
+
           //creatordata.innerHTML = value.valueOf();
         //iCreator.address=value.address;
       //  return iCreator.at(value);
