@@ -52,7 +52,15 @@ function getMethods(obj)
     }
     return res;
 };
-
+function executeFunctionByName(functionName, context /*, args */) {
+    var args = Array.prototype.slice.call(arguments, 2);
+    var namespaces = functionName.split(".");
+    var func = namespaces.pop();
+    for (var i = 0; i < namespaces.length; i++) {
+        context = context[namespaces[i]];
+    }
+    return context[func].apply(context, args);
+}
 window.App = {
   start: function() {
     var self = this;
@@ -89,13 +97,20 @@ window.App = {
       }).then(function(crt) {
         var creatordata = document.getElementById("creatordata");
           console.log(crt);
+          App.currentCrt = crt;
 
-        var res = getMethods(crt);
         var html = "";
-        res.forEach(function(m,i,res){
-            html+=`<br><button >`+m+`</button><br>`;
-
-          });
+        var abi = iCreator.abi;
+          App.currentAbi=abi;
+        for(var m in abi){
+            if(abi[m]['type']=="function"){
+              var inputs = abi[m]['inputs'];
+              for(var inp in inputs){
+                  html+=`<br><input type="text" id="`+abi[m]['name']+inputs[inp]['name']+`" placeholder="`+inputs[inp]['name']+`"></input>`;
+              }
+              html+=`<br><button onclick="App.runMethod('`+abi[m]['name']+`')">`+abi[m]['name']+`</button><br><br>`;
+            }
+          }
            creatordata.innerHTML=html;
 
           //creatordata.innerHTML = value.valueOf();
@@ -106,7 +121,21 @@ window.App = {
         self.setStatus("Error getting creator; see log.");
       });
     },
+  runMethod:function(methodName){
+    var crt=App.currentCrt;
+    var abi=App.currentAbi;
 
+    for(var m in abi){
+        if(abi[m]['name']==methodName){
+          console.log("OK!");
+          var inputs = abi[m]['inputs'];
+          for(var inp in inputs){
+            //  html+=`<br><input type="text" id="`+abi[m]['name']+inputs[inp]['name']+`" placeholder="`+inputs[inp]['name']+`"></input>`;
+          }
+
+        }
+      }
+  },
 /*  wantSameContract: function() {
     var self = this;
     var meta;
