@@ -124,15 +124,23 @@ window.App = {
   runMethod:function(methodName){
     var crt=App.currentCrt;
     var abi=App.currentAbi;
+  //  crt.defaults({from: window.web3.eth.coinbase});
 
     for(var m in abi){
         if(abi[m]['name']==methodName){
           console.log("OK!");
           var inputs = abi[m]['inputs'];
+          var argslist =[methodName,crt] ;
           for(var inp in inputs){
+            argslist.push( document.getElementById(abi[m]['name']+inputs[inp]['name']).value);
             //  html+=`<br><input type="text" id="`+abi[m]['name']+inputs[inp]['name']+`" placeholder="`+inputs[inp]['name']+`"></input>`;
-          }
 
+          }
+          argslist.push({from: account});
+            //var addr = window.web3.isAddress(argslist[argslist.length-2]);
+            //console.log(addr);
+        var result =  executeFunctionByName(...argslist);
+        console.log(result);
         }
       }
   },
@@ -299,6 +307,6 @@ window.addEventListener('load', function() {
     // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
     window.web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:8545"));
   }
-
+//window.web3.eth.
   App.start();
 });
