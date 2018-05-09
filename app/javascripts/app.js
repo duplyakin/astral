@@ -1,10 +1,9 @@
 // Import the page's CSS. Webpack will know what to do with it.
 import "../stylesheets/app.css";
-
 // Import libraries we need.
-import { default as Web3} from 'web3';
+var Web3 = require('web3');
 import { default as contract } from 'truffle-contract'
-import coder from 'web3/lib/solidity/coder.js'
+//import coder from 'web3/lib/solidity/coder.js'
 //import
 
 // Import our contract artifacts and turn them into usable abstractions.
@@ -80,7 +79,13 @@ function hexToString (hex) {
 window.App = {
   start: function() {
     var self = this;
-
+   if (typeof web3.currentProvider.sendAsync !== "function") {
+        web3.currentProvider.sendAsync = function() {
+        return web3.currentProvider.send.apply(
+          web3.currentProvider, arguments
+        );
+      };
+    }
     // Bootstrap the MetaCoin abstraction for Use.
     MetaCoin.setProvider(web3.currentProvider);
     MyStorage.setProvider(web3.currentProvider);
@@ -97,6 +102,9 @@ window.App = {
     IncreasingPriceCrowdsale.setProvider(web3.currentProvider);
     IncreasingPriceCrowdsaleBuilder.setProvider(web3.currentProvider);
     IncreasingPriceCrowdsaleCreator.setProvider(web3.currentProvider);
+
+
+
 },
 
     getCreator:function(){
@@ -166,9 +174,9 @@ window.App = {
           result.then(function(value){
               console.log(value);
               document.getElementById("status").innerHTML=value;
-            //var decoded = Web3.eth.abi.decodeParameters(resparams, result.value())
+            var decoded = Web3.eth.abi.decodeParameters(resparams,value)
             //var decoded = coder.decodeParams(resparams,value);
-            let decoded = hexToString(value);
+            //let decoded = hexToString(value);
              console.log(decoded);
           })
 
@@ -338,7 +346,7 @@ window.addEventListener('load', function() {
   } else {
     console.warn("No web3 detected. Falling back to http://127.0.0.1:8545. You should remove this fallback when you deploy live, as it's inherently insecure. Consider switching to Metamask for development. More info here: http://truffleframework.com/tutorials/truffle-and-metamask");
     // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
-    window.web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:8545"));
+    window.web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:8545");
   }
 //window.web3.eth.
   App.start();
