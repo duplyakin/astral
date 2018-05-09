@@ -4,6 +4,8 @@ import "../stylesheets/app.css";
 // Import libraries we need.
 import { default as Web3} from 'web3';
 import { default as contract } from 'truffle-contract'
+import coder from 'web3/lib/solidity/coder.js'
+//import
 
 // Import our contract artifacts and turn them into usable abstractions.
 import metacoin_artifacts from '../../build/contracts/MetaCoin.json'
@@ -60,6 +62,20 @@ function executeFunctionByName(functionName, context /*, args */) {
         context = context[namespaces[i]];
     }
     return context[func].apply(context, args);
+}
+
+function hexToString (hex) {
+
+    var string = '';
+
+    for (var i = 2; i < hex.length; i += 2) {
+
+      string += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+
+    }
+
+    return string;
+
 }
 window.App = {
   start: function() {
@@ -136,10 +152,27 @@ window.App = {
             //  html+=`<br><input type="text" id="`+abi[m]['name']+inputs[inp]['name']+`" placeholder="`+inputs[inp]['name']+`"></input>`;
 
           }
-          argslist.push({from: account});
+          argslist.push({from: window.web3.eth.coinbase, gasLimit:2000000});
             //var addr = window.web3.isAddress(argslist[argslist.length-2]);
+            console.log(window.web3.eth.coinbase);
             //console.log(addr);
         var result =  executeFunctionByName(...argslist);
+        var outputs = abi[m]['outputs'];
+        var resparams = [];
+        outputs.forEach(function(n){
+          resparams.push(n['type']);
+        });
+        if(resparams.length>0){
+          result.then(function(value){
+              console.log(value);
+              document.getElementById("status").innerHTML=value;
+            //var decoded = Web3.eth.abi.decodeParameters(resparams, result.value())
+            //var decoded = coder.decodeParams(resparams,value);
+            let decoded = hexToString(value);
+             console.log(decoded);
+          })
+
+        }
         console.log(result);
         }
       }
