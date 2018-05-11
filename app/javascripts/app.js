@@ -79,6 +79,9 @@ function hexToString (hex) {
 window.App = {
   start: function() {
     var self = this;
+    console.warn(web3.eth.accounts);
+  //  web3.eth.defaultAccount = web3.eth.accounts[0];
+  //  web3.personal.unlockAccount(web3.eth.defaultAccount);
    if (typeof web3.currentProvider.sendAsync !== "function") {
         web3.currentProvider.sendAsync = function() {
         return web3.currentProvider.send.apply(
@@ -114,7 +117,7 @@ window.App = {
        var dep=MyStorage.deployed().then(function(instance) {
         meta = instance;
           console.log(meta);
-        return meta.getLatestCreator.call(kind, {from: account});
+        return meta.getLatestCreator.call(kind, {from: web3.eth.defaultAccount});
       }).then(function(value) {
         //iCreator.address=value.address;
         return iCreator.at(value);
@@ -148,42 +151,49 @@ window.App = {
   runMethod:function(methodName){
     var crt=App.currentCrt;
     var abi=App.currentAbi;
-  //  crt.defaults({from: window.web3.eth.coinbase});
+  //  crt.defaults({from: web3.eth.defaultAccount});
 
     for(var m in abi){
         if(abi[m]['name']==methodName){
-          console.log("OK!");
-          var inputs = abi[m]['inputs'];
-          var argslist =[methodName,crt] ;
-          for(var inp in inputs){
-            argslist.push( document.getElementById(abi[m]['name']+inputs[inp]['name']).value);
-            //  html+=`<br><input type="text" id="`+abi[m]['name']+inputs[inp]['name']+`" placeholder="`+inputs[inp]['name']+`"></input>`;
+            console.log("OK!");
+            var inputs = abi[m]['inputs'];
+           var argslist =[/*methodName,crt*/] ;
+            for(var inp in inputs){
+              argslist.push( document.getElementById(abi[m]['name']+inputs[inp]['name']).value);
+              //  html+=`<br><input type="text" id="`+abi[m]['name']+inputs[inp]['name']+`" placeholder="`+inputs[inp]['name']+`"></input>`;
 
+            }
+          //  argslist.push({from: web3.eth.defaultAccount, gasLimit:3000000});
+              //var addr = web3.isAddress(argslist[argslist.length-2]);
+              console.log(web3.eth.defaultAccount);
+              //console.log(addr);
+            var result;
+
+
+                result=   crt[methodName].apply(...argslist,{from: web3.eth.defaultAccount, gasLimit:3000000}).then(function(res){
+                console.log(res);
+              });
+              
+
+        /*    var outputs = abi[m]['outputs'];
+            var resparams = [];
+            outputs.forEach(function(n){
+              resparams.push(n['type']);
+            });
+            if(resparams.length>0){
+              result.then(function(value){
+                  console.log(value);
+                  document.getElementById("status").innerHTML=value;
+                var decoded = Web3.eth.abi.decodeParameters(resparams,value)
+                //var decoded = coder.decodeParams(resparams,value);
+                //let decoded = hexToString(value);
+                 console.log(decoded);
+              })
+
+            }*/
+            console.log(result);
           }
-          argslist.push({from: window.web3.eth.coinbase, gasLimit:2000000});
-            //var addr = window.web3.isAddress(argslist[argslist.length-2]);
-            console.log(window.web3.eth.coinbase);
-            //console.log(addr);
-        var result =  executeFunctionByName(...argslist);
-        var outputs = abi[m]['outputs'];
-        var resparams = [];
-        outputs.forEach(function(n){
-          resparams.push(n['type']);
-        });
-        if(resparams.length>0){
-          result.then(function(value){
-              console.log(value);
-              document.getElementById("status").innerHTML=value;
-            var decoded = Web3.eth.abi.decodeParameters(resparams,value)
-            //var decoded = coder.decodeParams(resparams,value);
-            //let decoded = hexToString(value);
-             console.log(decoded);
-          })
-
         }
-        console.log(result);
-        }
-      }
   },
 /*  wantSameContract: function() {
     var self = this;
@@ -326,7 +336,7 @@ window.App = {
     var meta;
     MetaCoin.deployed().then(function(instance) {
       meta = instance;
-      return meta.sendCoin(receiver, amount, {from: account});
+      return meta.sendCoin(receiver, amount, {from: web3.eth.defaultAccount});
     }).then(function() {
       self.setStatus("Transaction complete!");
       self.refreshBalance();
@@ -348,6 +358,14 @@ window.addEventListener('load', function() {
     // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
     window.web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:8545");
   }
+  web3.eth.getAccounts(function (error, accounts) {
+
+    if (error) return console.error(error)
+    console.log(accounts);
+     web3.eth.accounts=accounts;
+    web3.eth.defaultAccount = web3.eth.accounts[0];
+
+  });
 //window.web3.eth.
   App.start();
 });
