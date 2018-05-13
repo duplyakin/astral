@@ -157,40 +157,26 @@ window.App = {
         if(abi[m]['name']==methodName){
             console.log("OK!");
             var inputs = abi[m]['inputs'];
-           var argslist =[/*methodName,crt*/] ;
+            var argslist =[/*methodName,crt*/] ;
             for(var inp in inputs){
-              argslist.push( document.getElementById(abi[m]['name']+inputs[inp]['name']).value);
+              let rawval = document.getElementById(abi[m]['name']+inputs[inp]['name']).value;
+              var convertedVal;
+              switch (inputs[inp]['type']) {
+                case "address":
+                  convertedVal =Web3.utils.toChecksumAddress(rawval);
+                  break;
+                default:
+                  convertedVal =rawval
+              }
+              argslist.push(convertedVal);
               //  html+=`<br><input type="text" id="`+abi[m]['name']+inputs[inp]['name']+`" placeholder="`+inputs[inp]['name']+`"></input>`;
 
             }
-          //  argslist.push({from: web3.eth.defaultAccount, gasLimit:3000000});
-              //var addr = web3.isAddress(argslist[argslist.length-2]);
-              console.log(web3.eth.defaultAccount);
-              //console.log(addr);
-            var result;
-
-
-                result=   crt[methodName].apply(...argslist,{from: web3.eth.defaultAccount, gasLimit:3000000}).then(function(res){
-                console.log(res);
+            argslist.push({from: web3.eth.defaultAccount, gasLimit:3000000});
+              console.log(argslist);
+                var result=   crt[methodName].apply( crt,argslist).then(function(res){
+                console.log(result);
               });
-              
-
-        /*    var outputs = abi[m]['outputs'];
-            var resparams = [];
-            outputs.forEach(function(n){
-              resparams.push(n['type']);
-            });
-            if(resparams.length>0){
-              result.then(function(value){
-                  console.log(value);
-                  document.getElementById("status").innerHTML=value;
-                var decoded = Web3.eth.abi.decodeParameters(resparams,value)
-                //var decoded = coder.decodeParams(resparams,value);
-                //let decoded = hexToString(value);
-                 console.log(decoded);
-              })
-
-            }*/
             console.log(result);
           }
         }
