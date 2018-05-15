@@ -1,4 +1,4 @@
-pragma solidity ^0.4.22;
+pragma solidity ^0.4.21;
 
 
 import "../node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol";
@@ -104,8 +104,10 @@ contract Storage is Ownable{
 // builder for contract.
 contract iDocumentBuilder is Ownable {
   iCreator creator;
-  bool isCreated = false;
+  bool isCreated;
   function iDocumentBuilder  (address _curator, iCreator _creator)public{
+  //  transferOwnership(_curator);
+  isCreated = false;
     owner = _curator;
     creator= _creator;
   }

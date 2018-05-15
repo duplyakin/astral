@@ -1,4 +1,4 @@
-pragma solidity ^0.4.22;
+pragma solidity ^0.4.21;
 import "../node_modules/zeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
 import "../node_modules/zeppelin-solidity/contracts/crowdsale/Crowdsale.sol";
 import "../node_modules/zeppelin-solidity/contracts/crowdsale/validation/TimedCrowdsale.sol";
@@ -19,15 +19,6 @@ contract SampleToken is iDocument, MintableToken{
 
 }
 
-contract SampleTokenCreator is iCreator{
-
-    function SampleTokenCreator(iBaseHolder _holder, uint64 _version) public iCreator(_holder, _version) {
-    }
-
-    function createDocumentBuilder (address _curator) public returns (iDocumentBuilder _newDocumentBuilder) {
-        _newDocumentBuilder = new SampleTokenBuilder(_curator,this);
-    }
-}
 
 contract SampleTokenBuilder is iDocumentBuilder{
 
@@ -36,7 +27,7 @@ contract SampleTokenBuilder is iDocumentBuilder{
   uint256 internal decimals;
 
   function SampleTokenBuilder  (address _curator, iCreator _creator) public iDocumentBuilder(_curator,_creator){
-
+      owner = _curator;
   }
 
   function getName() constant onlyOwner public returns (string){
@@ -64,6 +55,18 @@ contract SampleTokenBuilder is iDocumentBuilder{
   }
 }
 
+contract SampleTokenCreator is iCreator{
+
+    function SampleTokenCreator(iBaseHolder _holder, uint64 _version) public iCreator(_holder, _version) {
+    }
+
+    function createDocumentBuilder (address _curator) public returns (iDocumentBuilder _newDocumentBuilder) {
+      address tmp = address(this);
+        _newDocumentBuilder = iDocumentBuilder(new SampleTokenBuilder(_curator,iCreator(tmp)));
+    }
+}
+
+
 
 
 
@@ -80,26 +83,6 @@ contract IncreasingPriceCrowdsale is Ownable ,iDocument,TimedCrowdsale {
    owner = _owner;
     rates = _rates;
  }
-
- /*function setOpeningTime(uint256 _openingTime)  public onlyOwner{
-   require(rates.length = 0);
-   openingTime=_openingTime;
- }*/
-
-
- /*function setRate(uint256[] _rates)  public onlyOwner returns (uint256 len ){
-   require(openingTime>0);
-   rates = _rates[];
-   len =rates.length;
-   closingTime=openingTime.add(len.mul(60*60*24*7));
-   return rates.length;
- }*/
- /*function setToken(ERC20 _token) public onlyOwner {
-  token=_token;
- }
- function setWallet(address _wallet) public onlyOwner {
-  wallet=_wallet;
- }*/
 
  /**
   * @dev Returns the rate of tokens per wei at the present time.
@@ -133,7 +116,7 @@ contract IncreasingPriceCrowdsaleCreator is iCreator{
     }
 
     function createDocumentBuilder (address _curator) public returns (iDocumentBuilder _newDocumentBuilder) {
-        _newDocumentBuilder = new SampleTokenBuilder(_curator,this);
+        _newDocumentBuilder = new IncreasingPriceCrowdsaleBuilder(_curator,this);
     }
 }
 
