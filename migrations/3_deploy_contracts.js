@@ -14,11 +14,12 @@ module.exports = function(deployer, network, accounts) {
   var safeMath= artifacts.require("SafeMath");
 /*  var zeppelinSolidity= artifacts.require("zeppelin-solidity");*/
   var iBaseHolder = artifacts.require("iBaseHolder");
-    var icoBaseHolder = artifacts.require("iBaseHolder");
+  var icoBaseHolder = artifacts.require("iBaseHolder");
   var iCreator = artifacts.require("iCreator");
   var iDocument = artifacts.require("iDocument");
   var SampleToken = artifacts.require("SampleToken");
   var SampleTokenCreator = artifacts.require("SampleTokenCreator");
+  var SampleTokenBuilder = artifacts.require("SampleTokenBuilder");
   var myStorage = artifacts.require("Storage");
   var iVersionable=artifacts.require("iVersionable");
   var IncreasingPriceCrowdsaleBuilder=artifacts.require("IncreasingPriceCrowdsaleBuilder");
@@ -65,9 +66,14 @@ module.exports = function(deployer, network, accounts) {
   icoCreator=instance;
     return icoHolder.updateCreator(instance.address, { from: accounts[0],gasLimit:2000000});
 }).then(function() {
-  return  icoHolder.updateAbi(1,getAbi('./build/contracts/IncreasingPriceCrowdsale.json'), { from: accounts[0],gasLimit:2000000});
+  return  icoHolder.updateAbi(1,getAbi('./build/contracts/IncreasingPriceCrowdsale.json'), { from: accounts[0],gasLimit:3000000});
 }).then(function() {
-  return  icoCreator.setBuilderAbi(getAbi('./build/contracts/IncreasingPriceCrowdsaleBuilder.json'), { from: accounts[0],gasLimit:2000000});
+  return  icoCreator.setBuilderAbi(getAbi('./build/contracts/IncreasingPriceCrowdsaleBuilder.json'), { from: accounts[0],gasLimit:3000000});
+}).then(function(){
+    console.error("Account " +accounts[1]);
+  return tokenCreator.createDocumentBuilder(accounts[1],{ from: accounts[0],gasLimit:3000000});
+}).then(function(instance) {
+  console.log(instance);
 });
 
 

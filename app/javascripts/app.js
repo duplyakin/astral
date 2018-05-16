@@ -53,6 +53,32 @@ function getMethods(obj)
     }
     return res;
 };
+
+
+
+
+function createSpanForContract(element,contractAddress,contractObject){
+  var $span = $( document.createElement('span') );
+  $span.attr('id',contractAddress);
+  document.body.insertAfter(element, $span);
+  return $span;
+}
+function createSpanForCreator(element,contractAddress){
+  var span = createSpanForContract(element,contractAddress,iCreator);
+
+  window.app[contractAddress]={
+    createDocumentBuilder: function() {
+      var self = this;
+    }
+    getDocumentBuilderAbi: function() {
+    var self = this;
+  }
+    getDocumentAbi: function() {
+     var self = this;
+   }
+ };
+}
+
 function executeFunctionByName(functionName, context /*, args */) {
     var args = Array.prototype.slice.call(arguments, 2);
     var namespaces = functionName.split(".");
@@ -172,145 +198,17 @@ window.App = {
               //  html+=`<br><input type="text" id="`+abi[m]['name']+inputs[inp]['name']+`" placeholder="`+inputs[inp]['name']+`"></input>`;
 
             }
-            argslist.push({from: web3.eth.defaultAccount, gasLimit:3000000});
+            argslist.push({from: web3.eth.defaultAccount, gasLimit:2000000});
               console.log(argslist);
                 var result=   crt[methodName].apply( crt,argslist).then(function(res){
-                console.log(result);
+                console.log(res);
               });
             console.log(result);
           }
         }
   },
-/*  wantSameContract: function() {
-    var self = this;
-    var meta;
-    var kind = document.getElementById("newOwnerAddress").value;
-    iDocument.deployed().then(function(instance) {
-      meta = instance;
-      return meta.wantSameContract.call(kind, {from: account});
-    }).then(function(value) {
-      var documentdata2 = document.getElementById("documentdata2");
-        console.log(value);
-      documentdata2.innerHTML = value.valueOf();
-    }).catch(function(e) {
-      console.log(e);
-      self.setStatus("Error making the same contract for new owner; see log.");
-    });
-  },*/
 
-/*  setName: function() {
-    var self = this;
-    var meta;
-    var kind = document.getElementById("creatorname").value;
-    MyStorage.deployed().then(function(instance){
-      meta = instance;
-      return meta.getLatestCreator.call(kind, {from: account});
-    }).then(function(value) {
-      return iCreator.at(value);
-    }).then(function(instance) {
-      meta = instance;
-      return meta.createDocumentBuilder.call(account, {from: account});
-    }).then(function(instance) {
-      meta = instance;
-      var kind = document.getElementById("name").value;
-      return meta.setName.call(kind, {from: account});
-    }).then(function() {
-      return meta.getName.call({from: account});
-    }).then(function(value) {
-      var sampleTokenBuilder1 = document.getElementById("sampleTokenBuilder1");
-        console.log(value);
-      sampleTokenBuilder1.innerHTML = value.valueOf();
-    }).catch(function(e) {
-      console.log(e);
-      self.setStatus("Error making the same contract for new owner; see log.");
-    });
-  },
 
-  setSymbol: function() {
-    var self = this;
-    var meta;
-    var kind = document.getElementById("symbol").value;
-    SampleTokenBuilder.deployed().then(function(instance) {
-      meta = instance;
-      return meta.setSymbol.call(kind, {from: account});
-    }).then(function(value) {
-      var sampleTokenBuilder2 = document.getElementById("sampleTokenBuilder2");
-        console.log(value);
-      sampleTokenBuilder2.innerHTML = value.valueOf();
-    }).catch(function(e) {
-      console.log(e);
-      self.setStatus("Error making the same contract for new owner; see log.");
-    });
-  },
-
-  setDecimals: function() {
-    var self = this;
-    var meta;
-    var kind = document.getElementById("decimals").value;
-    SampleTokenBuilder.deployed().then(function(instance) {
-      meta = instance;
-      return meta.setDecimals.call(kind, {from: account});
-    }).then(function(value) {
-      var sampleTokenBuilder3 = document.getElementById("sampleTokenBuilder3");
-        console.log(value);
-      sampleTokenBuilder3.innerHTML = value.valueOf();
-    }).catch(function(e) {
-      console.log(e);
-      self.setStatus("Error making the same contract for new owner; see log.");
-    });
-  },
-*/
-/*  setName: function() {
-    var self = this;
-    var meta;
-    var kind = document.getElementById("token").value;
-    iDocument.deployed().then(function(instance) {
-      meta = instance;
-      return meta.setToken.call(kind, {from: account});
-    }).then(function(value) {
-      var IncreasingPriceCrowdsaleBuilder1 = document.getElementById("IncreasingPriceCrowdsaleBuilder1");
-        console.log(value);
-      IncreasingPriceCrowdsaleBuilder1.innerHTML = value.valueOf();
-    }).catch(function(e) {
-      console.log(e);
-      self.setStatus("Error making the same contract for new owner; see log.");
-    });
-  },
-
-  setSymbol: function() {
-    var self = this;
-    var meta;
-    var kind = document.getElementById("wallet").value;
-    iDocument.deployed().then(function(instance) {
-      meta = instance;
-      return meta.setWallet.call(kind, {from: account});
-    }).then(function(value) {
-      var IncreasingPriceCrowdsaleBuilder2 = document.getElementById("IncreasingPriceCrowdsaleBuilder2");
-        console.log(value);
-      IncreasingPriceCrowdsaleBuilder2.innerHTML = value.valueOf();
-    }).catch(function(e) {
-      console.log(e);
-      self.setStatus("Error making the same contract for new owner; see log.");
-    });
-  },
-
-  setDecimals: function() {
-    var self = this;
-    var meta;
-    var kind = document.getElementById("openingTime").value;
-    iDocument.deployed().then(function(instance) {
-      meta = instance;
-      return meta.setOpeningTime.call(kind, {from: account});
-    }).then(function(value) {
-      var IncreasingPriceCrowdsaleBuilder3 = document.getElementById("IncreasingPriceCrowdsaleBuilder3");
-        console.log(value);
-      IncreasingPriceCrowdsaleBuilder3.innerHTML = value.valueOf();
-    }).catch(function(e) {
-      console.log(e);
-      self.setStatus("Error making the same contract for new owner; see log.");
-    });
-  },
-*/
   sendCoin: function() {
     var self = this;
 

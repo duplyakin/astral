@@ -137,7 +137,7 @@ contract iCreator is iVersionable, Ownable {
         owner = msg.sender;
     }
 
-    function createDocumentBuilder(address _curator ) public returns (iDocumentBuilder _newDocumentBuilder) {
+    function createDocumentBuilder(address _curator ) public view returns (iDocumentBuilder _newDocumentBuilder) {
         _newDocumentBuilder = new iDocumentBuilder(_curator,this);
 
     }

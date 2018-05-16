@@ -30,13 +30,13 @@ contract SampleTokenBuilder is iDocumentBuilder{
       owner = _curator;
   }
 
-  function getName() constant onlyOwner public returns (string){
+  function getName() constant onlyOwner public view returns (string){
     return name;
   }
-  function getSymbol() constant onlyOwner public returns (string){
+  function getSymbol() constant onlyOwner public view returns (string){
     return symbol;
   }
-  function getDecimals() constant onlyOwner public returns (uint256){
+  function getDecimals() constant onlyOwner public view returns (uint256){
     return decimals;
   }
   function setName(string _name) onlyOwner whileNotCreated public{
@@ -60,9 +60,9 @@ contract SampleTokenCreator is iCreator{
     function SampleTokenCreator(iBaseHolder _holder, uint64 _version) public iCreator(_holder, _version) {
     }
 
-    function createDocumentBuilder (address _curator) public returns (iDocumentBuilder _newDocumentBuilder) {
-      address tmp = address(this);
-        _newDocumentBuilder = iDocumentBuilder(new SampleTokenBuilder(_curator,iCreator(tmp)));
+    function createDocumentBuilder (address _curator) public view returns (iDocumentBuilder _newDocumentBuilder) {
+
+        return iDocumentBuilder(new SampleTokenBuilder(_curator,this));
     }
 }
 
@@ -115,7 +115,7 @@ contract IncreasingPriceCrowdsaleCreator is iCreator{
     function IncreasingPriceCrowdsaleCreator(iBaseHolder _holder, uint64 _version) public iCreator(_holder, _version) {
     }
 
-    function createDocumentBuilder (address _curator) public returns (iDocumentBuilder _newDocumentBuilder) {
+    function createDocumentBuilder (address _curator) public view returns (iDocumentBuilder _newDocumentBuilder) {
         _newDocumentBuilder = new IncreasingPriceCrowdsaleBuilder(_curator,this);
     }
 }
