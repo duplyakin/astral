@@ -3,6 +3,7 @@ import "../stylesheets/app.css";
 // Import libraries we need.
 var Web3 = require('web3');
 import { default as contract } from 'truffle-contract'
+
 //import coder from 'web3/lib/solidity/coder.js'
 //import
 
@@ -54,29 +55,103 @@ function getMethods(obj)
     return res;
 };
 
+function createMethodsForAnyContract(element,contract){
+  var contractAddress=contract.options.address;
+  window.App[contractAddress]=contract;
+  var abi = contract.options.jsonInterface;
+    var html = "";
+    for(var m in abi){
+        if(abi[m]['type']=="function"){
+          var inputs = abi[m]['inputs'];
+          for(var inp in inputs){
+              html+=`<br><input type="text" id="`+abi[m]['name']+contractAddress+inputs[inp]['name']+`" placeholder="`+inputs[inp]['name']+`"></input>`;
+          }
+          html+=`<br><button onclick="App.runMethod('`+contractAddress+`','`+abi[m]['name']+`')">`+abi[m]['name']+`</button><br><br>`;
+        }
+      }
+       element.innerHTML=html;
 
+      //creatordata.innerHTML = value.valueOf();
+    //iCreator.address=value.address;
+  //  return iCreator.at(value);
+
+}
 
 
 function createSpanForContract(element,contractAddress,contractObject){
-  var $span = $( document.createElement('span') );
-  $span.attr('id',contractAddress);
-  document.body.insertAfter(element, $span);
-  return $span;
-}
-function createSpanForCreator(element,contractAddress){
-  var span = createSpanForContract(element,contractAddress,iCreator);
+  let span =  document.createElement('span');
+  span.setAttribute('id',contractAddress);
+//  document.body.insertBefore(element, span);
+element.appendChild(span);
+element.appendChild(document.createElement('hr'));
 
-  window.app[contractAddress]={
+//document.body.insertBefore(element, document.createElement('hr'));
+  return span;
+}
+function createSpanForCreator(element,contract){
+  var span = createSpanForContract(element,contract.address,iCreator);
+  var concreteContract = contract;
+
+  window.App[contract.address]={
     createDocumentBuilder: function() {
       var self = this;
-    }
+      var builderInstance;
+      var BuilderAbi;
+      var builderContract;
+      var newContractOwner = document.getElementById(contract.address+"createDocumentBuilder_curator").value;
+      concreteContract.createDocumentBuilder(newContractOwner,{from: web3.eth.defaultAccount, gasLimit:2000000}).then(function(dbi){
+        builderInstance=dbi;
+        return concreteContract.getDocumentBuilderAbi({from: web3.eth.defaultAccount, gasLimit:2000000});
+      }).then(function(dba){
+        let abiAsString = hexToString(dba);
+        BuilderAbi=JSON.parse(abiAsString)
+        builderContract = new web3.eth.Contract(BuilderAbi,builderInstance);
+        createMethodsForAnyContract(span,builderContract);
+
+      });
+    },
     getDocumentBuilderAbi: function() {
-    var self = this;
-  }
+      var self = this;
+    },
     getDocumentAbi: function() {
-     var self = this;
-   }
+      var self = this;
+    }
  };
+span.appendChild(document.createElement('br'));
+//<input type="text" id="`+abi[m]['name']+contractAddress+inputs[inp]['name']+`" placeholder="`+inputs[inp]['name']+`"></input>`
+//<br><label for="creatorversion">Version:</label><input type="text" id="version" placeholder="e.g., 95"></input>
+ var iCurator = document.createElement('input');
+ iCurator.setAttribute('id',contract.address+"createDocumentBuilder_curator");
+ iCurator.setAttribute('type',"text");
+ iCurator.setAttribute('placeholder',"Contract owner");
+ span.appendChild(iCurator);
+ span.appendChild(document.createElement('br'));
+ var bCreateBuilder = document.createElement('button');
+ bCreateBuilder.setAttribute('id',contract.address+"createDocumentBuilder");
+ bCreateBuilder.setAttribute('onclick',"window.App[\""+contract.address+"\"].createDocumentBuilder()");
+ bCreateBuilder.textContent="Create Document Builder";
+ span.appendChild(bCreateBuilder);
+ span.appendChild(document.createElement('br'));
+
+
+
+/*
+ span.appendChild(document.createElement('br'));
+ span.appendChild(document.createElement('br'));
+ var bGetBuilderAbi = document.createElement('button');
+ bGetBuilderAbi.setAttribute('id',contract.address+"getDocumentBuilderAbi");
+ bGetBuilderAbi.setAttribute('onclick',"window.App[\""+contract.address+"\"].getDocumentBuilderAbi()");
+ bGetBuilderAbi.textContent="Document Builder Abi";
+
+ span.appendChild(bGetBuilderAbi);
+ span.appendChild(document.createElement('br'));
+ span.appendChild(document.createElement('br'));
+ var bGetDocumentAbi = document.createElement('button');
+ bGetDocumentAbi.setAttribute('id',contract.address+"getDocumentAbi");
+ bGetDocumentAbi.setAttribute('onclick',"window.App[\""+contract.address+"\"].getDocumentAbi()");
+ bGetDocumentAbi.textContent="Document Abi";
+ span.appendChild(bGetDocumentAbi);
+ span.appendChild(document.createElement('br'));*/
 }
 
 function executeFunctionByName(functionName, context /*, args */) {
@@ -90,18 +165,13 @@ function executeFunctionByName(functionName, context /*, args */) {
 }
 
 function hexToString (hex) {
-
     var string = '';
-
     for (var i = 2; i < hex.length; i += 2) {
-
       string += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
-
     }
-
     return string;
-
 }
+
 window.App = {
   start: function() {
     var self = this;
@@ -136,47 +206,48 @@ window.App = {
 
 },
 
-    getCreator:function(){
-      var self = this;
-      var meta;
-      var kind = document.getElementById("creatorname").value;
-       var dep=MyStorage.deployed().then(function(instance) {
-        meta = instance;
-          console.log(meta);
-        return meta.getLatestCreator.call(kind, {from: web3.eth.defaultAccount});
-      }).then(function(value) {
-        //iCreator.address=value.address;
-        return iCreator.at(value);
-      }).then(function(crt) {
-        var creatordata = document.getElementById("creatordata");
-          console.log(crt);
-          App.currentCrt = crt;
-
-        var html = "";
-        var abi = iCreator.abi;
-          App.currentAbi=abi;
-        for(var m in abi){
-            if(abi[m]['type']=="function"){
-              var inputs = abi[m]['inputs'];
-              for(var inp in inputs){
-                  html+=`<br><input type="text" id="`+abi[m]['name']+inputs[inp]['name']+`" placeholder="`+inputs[inp]['name']+`"></input>`;
-              }
-              html+=`<br><button onclick="App.runMethod('`+abi[m]['name']+`')">`+abi[m]['name']+`</button><br><br>`;
+  getCreator:function(){
+    var self = this;
+    var meta;
+    var kind = document.getElementById("creatorname").value;
+     var dep=MyStorage.deployed().then(function(instance) {
+      meta = instance;
+        console.log(meta);
+      return meta.getLatestCreator.call(kind, {from: web3.eth.defaultAccount});
+    }).then(function(value) {
+      //iCreator.address=value.address;
+      return iCreator.at(value);
+    }).then(function(crt) {
+      var creatordata = document.getElementById("creatordata");
+        console.log(crt);
+      //  App.currentCrt = crt;
+      createSpanForCreator(creatordata,crt);
+    /*  var html = "";
+      var abi = iCreator.abi;
+        App.currentAbi=abi;
+      for(var m in abi){
+          if(abi[m]['type']=="function"){
+            var inputs = abi[m]['inputs'];
+            for(var inp in inputs){
+                html+=`<br><input type="text" id="`+abi[m]['name']+inputs[inp]['name']+`" placeholder="`+inputs[inp]['name']+`"></input>`;
             }
+            html+=`<br><button onclick="App.runMethod('`+abi[m]['name']+`')">`+abi[m]['name']+`</button><br><br>`;
           }
-           creatordata.innerHTML=html;
+        }
+         creatordata.innerHTML=html;
 
-          //creatordata.innerHTML = value.valueOf();
-        //iCreator.address=value.address;
-      //  return iCreator.at(value);
-      }).catch(function(e) {
-        console.log(e);
-        self.setStatus("Error getting creator; see log.");
-      });
-    },
-  runMethod:function(methodName){
-    var crt=App.currentCrt;
-    var abi=App.currentAbi;
+        //creatordata.innerHTML = value.valueOf();
+      //iCreator.address=value.address;
+    //  return iCreator.at(value);
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error getting creator; see log.");*/
+    });
+  },
+
+  runMethod:function(contractref,methodName){
+    var crt = App[contractref];
+    var abi= crt.options.jsonInterface;
   //  crt.defaults({from: web3.eth.defaultAccount});
 
     for(var m in abi){
