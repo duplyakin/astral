@@ -66,7 +66,7 @@ function createMethodsForAnyContract(element,contract){
           for(var inp in inputs){
               html+=`<br><input type="text" id="`+abi[m]['name']+contractAddress+inputs[inp]['name']+`" placeholder="`+inputs[inp]['name']+`"></input>`;
           }
-          html+=`<br><button onclick="App.runMethod('`+contractAddress+`','`+abi[m]['name']+`')">`+abi[m]['name']+`</button><br><br>`;
+          html+=`<br><button onclick="window.App.runMethod('`+contractAddress+`','`+abi[m]['name']+`')">`+abi[m]['name']+`</button><br><br>`;
         }
       }
        element.innerHTML=html;
@@ -105,7 +105,7 @@ function createSpanForCreator(element,contract){
       }).then(function(dba){
         let abiAsString = hexToString(dba);
         BuilderAbi=JSON.parse(abiAsString)
-        builderContract = new web3.eth.Contract(BuilderAbi,builderInstance);
+        builderContract = new web3.eth.Contract(JSON.parse(abiAsString),builderInstance);
         createMethodsForAnyContract(span,builderContract);
 
       });
@@ -269,12 +269,25 @@ window.App = {
               //  html+=`<br><input type="text" id="`+abi[m]['name']+inputs[inp]['name']+`" placeholder="`+inputs[inp]['name']+`"></input>`;
 
             }
-            argslist.push({from: web3.eth.defaultAccount, gasLimit:2000000});
+            crt.options.from= web3.eth.defaultAccount;
+            crt.options.gasLimit= 2000000;
+
+          //  argslist.push({from: web3.eth.defaultAccount, gasLimit:2000000});
               console.log(argslist);
-                var result=   crt[methodName].apply( crt,argslist).then(function(res){
+                var to=   crt.methods[methodName];
+                if(abi[m]["constant"]){
+                  argslist.push(function(err,res){
+                    if(err!=null){
+                      console.error(err);
+                    }
+                  console.log(res);
+                });
+                  to.call.apply(to,argslist);
+              }else{
+                to.send({from: web3.eth.defaultAccount, gasLimit:2000000}).then(function(res){
                 console.log(res);
               });
-            console.log(result);
+              }
           }
         }
   },
