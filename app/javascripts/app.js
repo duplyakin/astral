@@ -55,6 +55,10 @@ function getMethods(obj)
     return res;
 };
 
+function generateElementId(functionname, contractAddress,varname){
+  return functionname+contractAddress+varname;
+}
+
 function createMethodsForAnyContract(element,contract){
   var contractAddress=contract.options.address;
   window.App[contractAddress]=contract;
@@ -64,7 +68,7 @@ function createMethodsForAnyContract(element,contract){
         if(abi[m]['type']=="function"){
           var inputs = abi[m]['inputs'];
           for(var inp in inputs){
-              html+=`<br><input type="text" id="`+abi[m]['name']+contractAddress+inputs[inp]['name']+`" placeholder="`+inputs[inp]['name']+`"></input>`;
+              html+=`<br><input type="text" id="`+generateElementId(abi[m]['name'],contractAddress,inputs[inp]['name'])+`" placeholder="`+inputs[inp]['name']+`"></input>`;
           }
           html+=`<br><button onclick="window.App.runMethod('`+contractAddress+`','`+abi[m]['name']+`')">`+abi[m]['name']+`</button><br><br>`;
         }
@@ -254,9 +258,10 @@ window.App = {
         if(abi[m]['name']==methodName){
             console.log("OK!");
             var inputs = abi[m]['inputs'];
-            var argslist =[/*methodName,crt*/] ;
+            var argslist =[/*contractref*/] ;
             for(var inp in inputs){
-              let rawval = document.getElementById(abi[m]['name']+inputs[inp]['name']).value;
+              var elem = document.getElementById(generateElementId(abi[m]['name'],contractref,inputs[inp]['name']));
+              let rawval = elem.value;
               var convertedVal;
               switch (inputs[inp]['type']) {
                 case "address":
@@ -275,19 +280,23 @@ window.App = {
           //  argslist.push({from: web3.eth.defaultAccount, gasLimit:2000000});
               console.log(argslist);
                 var to=   crt.methods[methodName];
+
                 if(abi[m]["constant"]){
-                  argslist.push(function(err,res){
+                /* argslist.push(function(err,res){
                     if(err!=null){
                       console.error(err);
                     }
                   console.log(res);
-                });
-                  to.call.apply(to,argslist);
+                });*/
+                  to.apply(to,argslist).call().then(function (result)
+                  {
+                      console.log(result);
+                  });
               }else{
-                to.send({from: web3.eth.defaultAccount, gasLimit:2000000}).then(function(res){
+                 to.apply(to,argslist).send().then(function(res){
                 console.log(res);
               });
-              }
+            }
           }
         }
   },
