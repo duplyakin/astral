@@ -38,38 +38,51 @@ module.exports = function(deployer, network, accounts) {
   return myStorage.deployed();
 }).then(function(instance) {
   storage = instance;
+  console.log("myStorage");
   return iBaseHolder.deployed();
 
 }).then(function(instance) {
   holder = instance;
+  console.error("iBaseHolder");
   return  storage.addHolder("token",holder.address);
 
 }).then(function() {
   //holder.address
+  console.error("storage.addHolder");
   return SampleTokenCreator.new(holder.address,1, { from: accounts[0]});
 
 }).then(function(instance) {
   tokenCreator=instance;
+    console.error("SampleTokenCreator.new");
   return holder.updateCreator(instance.address, { from: accounts[0]});
 }).then(function() {
+    console.error("holder.updateCreator");
   return  holder.updateAbi(1,getAbi('./build/contracts/SampleToken.json'), { from: accounts[0]});
 }).then(function() {
+    console.error("holder.updateAbi");
   return  tokenCreator.setBuilderAbi(getAbi('./build/contracts/SampleTokenBuilder.json'), { from: accounts[0]});
 }).then(function() {
+    console.error("tokenCreator.setBuilderAbi");
   return icoBaseHolder.new( { from: accounts[0]})
 }).then(function(instance) {
     icoHolder= instance;
+      console.error("icoBaseHolder.new");
     return  storage.addHolder("IncreasingPriceCrowdsale",icoHolder.address);
 }).then(function() {
+    console.error("storage.addHolder(IncreasingPriceCrowdsale");
   return    IncreasingPriceCrowdsaleCreator.new(icoHolder.address,1, { from: accounts[0]});
 }).then(function(instance) {
   icoCreator=instance;
+    console.error("IncreasingPriceCrowdsaleCreator.new");
     return icoHolder.updateCreator(instance.address, { from: accounts[0],gasLimit:2000000});
 }).then(function() {
+  console.error("icoHolder.updateCreator");
   return  icoHolder.updateAbi(1,getAbi('./build/contracts/IncreasingPriceCrowdsale.json'), { from: accounts[0],gasLimit:3000000});
 }).then(function() {
+  console.error("icoHolder.updateAbi");
   return  icoCreator.setBuilderAbi(getAbi('./build/contracts/IncreasingPriceCrowdsaleBuilder.json'), { from: accounts[0],gasLimit:3000000});
 }).then(function(){
+
     console.error("Account " +accounts[1]);
   return tokenCreator.createDocumentBuilder(accounts[1],{ from: accounts[0],gasLimit:3000000});
 }).then(function(instance) {

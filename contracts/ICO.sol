@@ -30,13 +30,13 @@ contract SampleTokenBuilder is iDocumentBuilder{
       owner = _curator;
   }
 
-  function getName() constant onlyOwner public view returns (string){
+  function getName()  onlyOwner public view returns (string){
     return name;
   }
-  function getSymbol() constant onlyOwner public view returns (string){
+  function getSymbol()  onlyOwner public view returns (string){
     return symbol;
   }
-  function getDecimals() constant onlyOwner public view returns (uint256){
+  function getDecimals()  onlyOwner public view returns (uint256){
     return decimals;
   }
   function setName(string _name) onlyOwner whileNotCreated public{

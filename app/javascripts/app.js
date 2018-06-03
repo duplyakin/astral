@@ -250,10 +250,10 @@ window.App = {
   },
 
   runMethod:function(contractref,methodName){
-    var crt = App[contractref];
+    var crt = window.App[contractref];
     var abi= crt.options.jsonInterface;
   //  crt.defaults({from: web3.eth.defaultAccount});
-
+    console.log(crt);
     for(var m in abi){
         if(abi[m]['name']==methodName){
             console.log("OK!");
@@ -264,9 +264,9 @@ window.App = {
               let rawval = elem.value;
               var convertedVal;
               switch (inputs[inp]['type']) {
-                case "address":
+              /*  case "address":
                   convertedVal =Web3.utils.toChecksumAddress(rawval);
-                  break;
+                  break;*/
                 default:
                   convertedVal =rawval
               }
@@ -275,25 +275,27 @@ window.App = {
 
             }
             crt.options.from= web3.eth.defaultAccount;
-            crt.options.gasLimit= 2000000;
+            crt.options.gasLimit= 20000000;
 
           //  argslist.push({from: web3.eth.defaultAccount, gasLimit:2000000});
-              console.log(argslist);
-                var to=   crt.methods[methodName];
-
-                if(abi[m]["constant"]){
+              console.log("args :"+argslist);
+              var to=   crt.methods[methodName];
+              console.log("method :"+to);
+              if(abi[m]["constant"]){
                 /* argslist.push(function(err,res){
                     if(err!=null){
                       console.error(err);
                     }
                   console.log(res);
                 });*/
-                  to.apply(to,argslist).call().then(function (result)
+                executeFunctionByName(methodName,crt.methods,...argslist).call().then(function (result)
                   {
                       console.log(result);
                   });
               }else{
-                 to.apply(to,argslist).send().then(function(res){
+                var txobj = executeFunctionByName(methodName,crt.methods,...argslist);
+                txobj.from = web3.eth.defaultAccount;
+                  web3.eth.sendTransaction( txobj,function(res){
                 console.log(res);
               });
             }
@@ -344,5 +346,5 @@ window.addEventListener('load', function() {
 
   });
 //window.web3.eth.
-  App.start();
+  window.App.start();
 });
