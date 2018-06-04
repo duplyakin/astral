@@ -103,13 +103,14 @@ function createSpanForCreator(element,contract){
       var BuilderAbi;
       var builderContract;
       var newContractOwner = document.getElementById(contract.address+"createDocumentBuilder_curator").value;
-      concreteContract.createDocumentBuilder(newContractOwner,{from: web3.eth.defaultAccount, gasLimit:2000000}).then(function(dbi){
+      concreteContract.createDocumentBuilder(newContractOwner,{from: web3.eth.defaultAccount, gasLimit:20000000}).then(function(dbi){
         builderInstance=dbi;
-        return concreteContract.getDocumentBuilderAbi({from: web3.eth.defaultAccount, gasLimit:2000000});
+        return concreteContract.getDocumentBuilderAbi({from: web3.eth.defaultAccount, gasLimit:20000000});
       }).then(function(dba){
         let abiAsString = hexToString(dba);
         BuilderAbi=JSON.parse(abiAsString)
-        builderContract = new web3.eth.Contract(JSON.parse(abiAsString),builderInstance);
+        builderContract = new web3.eth.Contract(JSON.parse(abiAsString),builderInstance,{from: web3.eth.defaultAccount});
+      //  builderContract.
         createMethodsForAnyContract(span,builderContract);
 
       });
@@ -226,26 +227,7 @@ window.App = {
         console.log(crt);
       //  App.currentCrt = crt;
       createSpanForCreator(creatordata,crt);
-    /*  var html = "";
-      var abi = iCreator.abi;
-        App.currentAbi=abi;
-      for(var m in abi){
-          if(abi[m]['type']=="function"){
-            var inputs = abi[m]['inputs'];
-            for(var inp in inputs){
-                html+=`<br><input type="text" id="`+abi[m]['name']+inputs[inp]['name']+`" placeholder="`+inputs[inp]['name']+`"></input>`;
-            }
-            html+=`<br><button onclick="App.runMethod('`+abi[m]['name']+`')">`+abi[m]['name']+`</button><br><br>`;
-          }
-        }
-         creatordata.innerHTML=html;
 
-        //creatordata.innerHTML = value.valueOf();
-      //iCreator.address=value.address;
-    //  return iCreator.at(value);
-    }).catch(function(e) {
-      console.log(e);
-      self.setStatus("Error getting creator; see log.");*/
     });
   },
 
@@ -277,6 +259,7 @@ window.App = {
             crt.options.from= web3.eth.defaultAccount;
             crt.options.gasLimit= 20000000;
 
+
           //  argslist.push({from: web3.eth.defaultAccount, gasLimit:2000000});
               console.log("args :"+argslist);
               var to=   crt.methods[methodName];
@@ -294,8 +277,8 @@ window.App = {
                   });
               }else{
                 var txobj = executeFunctionByName(methodName,crt.methods,...argslist);
-                txobj.from = web3.eth.defaultAccount;
-                  web3.eth.sendTransaction( txobj,function(res){
+              //  txobj.from = web3.eth.defaultAccount;
+                  txobj.send({from: web3.eth.defaultAccount},function(res){
                 console.log(res);
               });
             }

@@ -60,9 +60,9 @@ contract SampleTokenCreator is iCreator{
     function SampleTokenCreator(iBaseHolder _holder, uint64 _version) public iCreator(_holder, _version) {
     }
 
-    function createDocumentBuilder (address _curator) public view returns (iDocumentBuilder _newDocumentBuilder) {
+    function createDocumentBuilder (address _curator) public view returns (address _newDocumentBuilder) {
 
-        return iDocumentBuilder(new SampleTokenBuilder(_curator,this));
+        _newDocumentBuilder= new SampleTokenBuilder(_curator,this);
     }
 }
 
@@ -115,7 +115,7 @@ contract IncreasingPriceCrowdsaleCreator is iCreator{
     function IncreasingPriceCrowdsaleCreator(iBaseHolder _holder, uint64 _version) public iCreator(_holder, _version) {
     }
 
-    function createDocumentBuilder (address _curator) public view returns (iDocumentBuilder _newDocumentBuilder) {
+    function createDocumentBuilder (address _curator) public view returns (address _newDocumentBuilder) {
         _newDocumentBuilder = new IncreasingPriceCrowdsaleBuilder(_curator,this);
     }
 }
