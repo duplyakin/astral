@@ -32,7 +32,7 @@ module.exports = function(deployer, network, accounts) {
 
   var storage,holder;
   var stc;
-  var tokenCreator;
+  var tokenCreator, tokenBuilder,token;
   var icoHolder,icoCreator;
   deployer.then(function() {
   return myStorage.deployed();
@@ -83,9 +83,30 @@ module.exports = function(deployer, network, accounts) {
   return  icoCreator.setBuilderAbi(getAbi('./build/contracts/IncreasingPriceCrowdsaleBuilder.json'), { from: accounts[0],gasLimit:3000000});
 }).then(function(){
 
-    console.error("Account " +accounts[1]);
-  return tokenCreator.createDocumentBuilder(accounts[1],{ from: accounts[0],gasLimit:3000000});
+    console.error("tokenCreator.createDocumentBuilder ");
+  return tokenCreator.createDocumentBuilder(accounts[1],tokenCreator.address,{ from: accounts[0],gasLimit:30000000});
 }).then(function(instance) {
+  console.error(JSON.stringify(instance));
+  tokenBuilder=SampleTokenBuilder.at(instance);
+  return tokenBuilder.setName("xxx",{ from: accounts[1],gasLimit:30000000});
+
+}).then(function() {
+  return tokenBuilder.setSymbol("yyy",{ from: accounts[1],gasLimit:30000000});
+
+}).then(function() {
+
+  return tokenBuilder.setDecimals(18,{ from: accounts[1],gasLimit:30000000});
+
+}).then(function() {
+
+  return tokenBuilder.build({ from: accounts[1],gasLimit:30000000});
+
+}).then(function(instance) {
+  token=SampleToken.at(instance);
+  return token.symbol()
+  console.log(instance);
+}).then(function(instance) {
+
   console.log(instance);
 });
 

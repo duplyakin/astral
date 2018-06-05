@@ -137,8 +137,8 @@ contract iCreator is iVersionable, Ownable {
         owner = msg.sender;
     }
 
-    function createDocumentBuilder(address _curator ) public view returns (address _newDocumentBuilder) {
-        _newDocumentBuilder = address(new iDocumentBuilder(_curator,this));
+    function createDocumentBuilder(address _curator ,iCreator creator) public returns (address _newDocumentBuilder) {
+        _newDocumentBuilder = address(new iDocumentBuilder(_curator,creator));
 
     }
     function setBuilderAbi(bytes myabi) public {
@@ -177,7 +177,7 @@ contract iDocument is iVersionable {
 
        iCreator creator = holder.getLatestCreator();
 
-        _newDoc =creator.createDocumentBuilder(_newOwner);
+        _newDoc =creator.createDocumentBuilder(_newOwner,creator);
       //     holder.registerDocument(_newOwner, _newDoc);
     }
 
