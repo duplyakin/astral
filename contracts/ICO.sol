@@ -26,6 +26,7 @@ contract SampleTokenBuilder is iDocumentBuilder{
   string internal symbol;
   uint256 internal decimals;
 
+  event SampleTokenCreated(address _curator,address token);
   function SampleTokenBuilder  (address _curator, iCreator _creator) public iDocumentBuilder(_curator,_creator){
       owner = _curator;
   }
@@ -48,10 +49,12 @@ contract SampleTokenBuilder is iDocumentBuilder{
   function setDecimals(uint256 _decimals) onlyOwner whileNotCreated public{
     decimals=_decimals;
   }
-  function build() public onlyOwner whileNotCreated setCreatedOnSuccess returns (iDocument _doc) {
-    require(bytes(name).length>0 && bytes(symbol).length>0 && decimals>0);
-    _doc= new SampleToken(owner,creator,name, symbol,decimals);
-    creator.getHolder().registerDocument(owner,_doc);
+  function build() public onlyOwner/*whileNotCreated setCreatedOnSuccess*/ returns (iDocument _doc) {
+  //  require(bytes(name).length>0 && bytes(symbol).length>0 && decimals>0);
+    SampleToken tok = new SampleToken(owner,creator,name, symbol,decimals);
+  //  creator.getHolder().registerDocument(owner,tok);
+    emit SampleTokenCreated(owner,tok);
+    _doc= tok;
   }
 }
 
@@ -60,9 +63,13 @@ contract SampleTokenCreator is iCreator{
     function SampleTokenCreator(iBaseHolder _holder, uint64 _version) public iCreator(_holder, _version) {
     }
 
+    event SampleTokenBuilderCreated(address _curator,address builder);
+
     function createDocumentBuilder (address _curator,iCreator creator) public returns (address _newDocumentBuilder) {
         address lastbuilder  = new SampleTokenBuilder(_curator,creator);
+        emit SampleTokenBuilderCreated(_curator,lastbuilder);
         _newDocumentBuilder= SampleTokenBuilder(lastbuilder);
+
     }
 }
 

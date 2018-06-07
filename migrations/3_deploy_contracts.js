@@ -87,23 +87,40 @@ module.exports = function(deployer, network, accounts) {
   return tokenCreator.createDocumentBuilder(accounts[1],tokenCreator.address,{ from: accounts[0],gasLimit:30000000});
 }).then(function(instance) {
   console.error(JSON.stringify(instance));
-  tokenBuilder=SampleTokenBuilder.at(instance);
+  var eventData;
+  instance.logs.forEach(function(element){
+    if(element.event==="SampleTokenBuilderCreated"){
+      eventData=element;
+    }
+  });
+  tokenBuilder=SampleTokenBuilder.at(eventData.args.builder);
+    console.error("tokenBuilder.setName");
   return tokenBuilder.setName("xxx",{ from: accounts[1],gasLimit:30000000});
 
 }).then(function() {
+    console.error("tokenBuilder.setSymbol");
   return tokenBuilder.setSymbol("yyy",{ from: accounts[1],gasLimit:30000000});
 
-}).then(function() {
-
+}).then(function(instance) {
+    console.error(JSON.stringify(instance));
+  console.error("tokenBuilder.setDecimals");
   return tokenBuilder.setDecimals(18,{ from: accounts[1],gasLimit:30000000});
 
 }).then(function() {
-
+console.error("tokenBuilder.build");
   return tokenBuilder.build({ from: accounts[1],gasLimit:30000000});
-
 }).then(function(instance) {
-  token=SampleToken.at(instance);
-  return token.symbol()
+    console.error(JSON.stringify(instance));
+  var eventData;
+  instance.logs.forEach(function(element){
+    if(element.event==="SampleTokenCreated"){
+      eventData=element;
+    }
+  });
+    token=SampleToken.at(eventData.args.token);
+
+//  token=SampleToken.at(instance);
+  return token.symbol();
   console.log(instance);
 }).then(function(instance) {
 

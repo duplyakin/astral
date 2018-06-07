@@ -90,10 +90,10 @@ contract Storage is Ownable{
   }
   mapping (uint256 => iBaseHolder) holdersByType;
 
-  function getLatestCreatorVersion(string contractType)external view returns (uint){
+  function getLatestCreatorVersion(string contractType)public view returns (uint){
     return holdersByType[ uint256(keccak256(contractType))].getLatestCreator().getVersion();
   }
-  function getLatestCreator(string contractType) external view returns (iCreator _creator){
+  function getLatestCreator(string contractType) public view returns (iCreator _creator){
      return holdersByType[ uint256(keccak256(contractType))].getLatestCreator();
   }
   function addHolder(string contractType,iBaseHolder holder) public {
