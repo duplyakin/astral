@@ -49,8 +49,8 @@ contract SampleTokenBuilder is iDocumentBuilder{
   function setDecimals(uint256 _decimals) onlyOwner whileNotCreated public{
     decimals=_decimals;
   }
-  function build() public onlyOwner/*whileNotCreated setCreatedOnSuccess*/ returns (iDocument _doc) {
-  //  require(bytes(name).length>0 && bytes(symbol).length>0 && decimals>0);
+  function build() public onlyOwner whileNotCreated setCreatedOnSuccess returns (iDocument _doc) {
+    require(bytes(name).length>0 && bytes(symbol).length>0 && decimals>0);
     SampleToken tok = new SampleToken(owner,creator,name, symbol,decimals);
   //  creator.getHolder().registerDocument(owner,tok);
     emit SampleTokenCreated(owner,tok);
@@ -65,8 +65,8 @@ contract SampleTokenCreator is iCreator{
 
     event SampleTokenBuilderCreated(address _curator,address builder);
 
-    function createDocumentBuilder (address _curator,iCreator creator) public returns (address _newDocumentBuilder) {
-        address lastbuilder  = new SampleTokenBuilder(_curator,creator);
+    function createDocumentBuilder (address _curator/*,iCreator creator*/) public returns (address _newDocumentBuilder) {
+        address lastbuilder  = new SampleTokenBuilder(_curator,this);
         emit SampleTokenBuilderCreated(_curator,lastbuilder);
         _newDocumentBuilder= SampleTokenBuilder(lastbuilder);
 
@@ -183,6 +183,6 @@ contract IncreasingPriceCrowdsaleBuilder is iDocumentBuilder{
   //  ipc.setRate(rate);
   //  ipc.setWallet(wallet);
     _doc=ipc;
-    creator.getHolder().registerDocument(owner,_doc);
+    //creator.getHolder().registerDocument(owner,_doc);
   }
 }

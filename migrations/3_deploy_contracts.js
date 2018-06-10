@@ -84,7 +84,7 @@ module.exports = function(deployer, network, accounts) {
 }).then(function(){
 
     console.error("tokenCreator.createDocumentBuilder ");
-  return tokenCreator.createDocumentBuilder(accounts[1],tokenCreator.address,{ from: accounts[0],gasLimit:30000000});
+  return tokenCreator.createDocumentBuilder(accounts[1],{ from: accounts[0],gasLimit:30000000});
 }).then(function(instance) {
   console.error(JSON.stringify(instance));
   var eventData;
@@ -120,11 +120,14 @@ console.error("tokenBuilder.build");
     token=SampleToken.at(eventData.args.token);
 
 //  token=SampleToken.at(instance);
-  return token.symbol();
+  return token.getHolder();
   console.log(instance);
 }).then(function(instance) {
-
-  console.log(instance);
+  console.log("holder check:\n"+iBaseHolder.address+"\n"+instance);
+  console.log(JSON.stringify(instance));
+  return iBaseHolder.registerDocument(accounts[1],token.address,{ from: accounts[1],gasLimit:30000000});
+}).then(function(instance) {
+  console.log(JSON.stringify(instance));
 });
 
 

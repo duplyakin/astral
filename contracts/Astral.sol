@@ -70,14 +70,14 @@ contract iBaseHolder{
         _creator =getCreator(newestVersion);
     }
 
-    function registerDocument(address _owner, iDocument document) public {
-
+    function registerDocument(address _owner, address _document) public {
+        iDocument document =iDocument(_document);
         uint64 _documentVersion=document.getVersion();
-        require (_documentVersion<=newestVersion/*,'document source unspecified!'*/);
+        //require (_documentVersion<=newestVersion/*,'document source unspecified!'*/);
 
         mapping (address => address) docsForVersion = allDocuments[_documentVersion];
-        address docExists = docsForVersion[_owner];
-        require(docExists==0/*,'document already created!'*/);
+      //  address docExists = docsForVersion[_owner];
+      //  require(docExists==address(0),'document already created!');
         docsForVersion[_owner]=document;
 
     }
@@ -105,7 +105,7 @@ contract Storage is Ownable{
 contract iDocumentBuilder is Ownable {
   iCreator creator;
   bool isCreated;
-  function iDocumentBuilder  (address _curator, iCreator _creator)public{
+  constructor  (address _curator, iCreator _creator)public{
   //  transferOwnership(_curator);
   isCreated = false;
     owner = _curator;
@@ -125,6 +125,8 @@ contract iDocumentBuilder is Ownable {
   function build() public onlyOwner whileNotCreated setCreatedOnSuccess returns (iDocument doc) {
     return new iDocument(owner, creator);
   }
+
+
 
 
 
@@ -179,6 +181,10 @@ contract iDocument is iVersionable {
 
         _newDoc =creator.createDocumentBuilder(_newOwner,creator);
       //     holder.registerDocument(_newOwner, _newDoc);
+    }
+
+    function register() public{
+       holder.registerDocument(owner, this);
     }
 
 }
