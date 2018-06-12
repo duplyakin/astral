@@ -122,11 +122,11 @@ console.error("tokenBuilder.build");
 //  token=SampleToken.at(instance);
   return token.getHolder();
   console.log(instance);
-}).then(function(instance) {
+})/*.then(function(instance) {
   console.log("holder check:\n"+iBaseHolder.address+"\n"+instance);
   console.log(JSON.stringify(instance));
   return iBaseHolder.registerDocument(accounts[1],token.address,{ from: accounts[1],gasLimit:30000000});
-}).then(function(instance) {
+})*/.then(function(instance) {
   console.log(JSON.stringify(instance));
 });
 

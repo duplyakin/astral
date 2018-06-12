@@ -68,7 +68,7 @@ contract SampleTokenCreator is iCreator{
     function createDocumentBuilder (address _curator/*,iCreator creator*/) public returns (address _newDocumentBuilder) {
         address lastbuilder  = new SampleTokenBuilder(_curator,this);
         emit SampleTokenBuilderCreated(_curator,lastbuilder);
-        _newDocumentBuilder= SampleTokenBuilder(lastbuilder);
+        _newDocumentBuilder= lastbuilder;
 
     }
 }

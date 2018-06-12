@@ -103,8 +103,10 @@ function createSpanForCreator(element,contract){
       var BuilderAbi;
       var builderContract;
       var newContractOwner = document.getElementById(contract.address+"createDocumentBuilder_curator").value;
-      concreteContract.createDocumentBuilder(newContractOwner,{from: web3.eth.defaultAccount, gasLimit:20000000}).then(function(dbi){
-        builderInstance=dbi;
+      concreteContract.createDocumentBuilder(newContractOwner,{from: web3.eth.defaultAccount, gasLimit:30000000})
+      .then(function(dbi){
+      //  console.log(JSON.stringify(dbi));
+        builderInstance=dbi;/*!!!!!!!!*/
         return concreteContract.getDocumentBuilderAbi({from: web3.eth.defaultAccount, gasLimit:20000000});
       }).then(function(dba){
         let abiAsString = hexToString(dba);
@@ -224,7 +226,7 @@ window.App = {
       return iCreator.at(value);
     }).then(function(crt) {
       var creatordata = document.getElementById("creatordata");
-        console.log(crt);
+    //    console.log(JSON.stringify(crt));
       //  App.currentCrt = crt;
       createSpanForCreator(creatordata,crt);
 
@@ -326,7 +328,9 @@ window.addEventListener('load', function() {
     console.log(accounts);
      web3.eth.accounts=accounts;
     web3.eth.defaultAccount = web3.eth.accounts[0];
-
+    let accountLabel = document.getElementById("accountLabel");
+    let accTxt = accountLabel.innerHTML;
+    accountLabel.innerHTML=accTxt+web3.eth.defaultAccount;
   });
 //window.web3.eth.
   window.App.start();
