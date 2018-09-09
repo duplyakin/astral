@@ -140,14 +140,16 @@ contract iDocumentBuilder is Ownable {
 // this class should be only one for contract version
 contract iCreator is iVersionable, Ownable {
 
+    event CreatorBaseFired(address _curator);
      bytes private builderAbi ;
     function iCreator(iBaseHolder _holder,uint64 version)public iVersionable(_holder,version){
         owner = msg.sender;
     }
 
     function createDocumentBuilder(address _curator ) public returns (address _newDocumentBuilder) {
-        _newDocumentBuilder = address(new iDocumentBuilder(_curator,this));
 
+        emit CreatorBaseFired(_curator);
+        _newDocumentBuilder = address(new iDocumentBuilder(_curator,this));
     }
     function setBuilderAbi(bytes myabi) public {
       builderAbi=myabi;

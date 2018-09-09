@@ -52,8 +52,12 @@ module.exports = function(deployer, network, accounts) {
   return SampleTokenCreator.new(holder.address,1, { from: accounts[0]});
 
 }).then(function(instance) {
+
+console.error("SampleTokenCreator.new");
+  return SampleTokenCreator.at(instance.address);//Эксперимент: iCreator.at(instance.address)
+}).then(function(instance) {
+  console.error("iCreator from SampleTokenCreator");
   tokenCreator=instance;
-    console.error("SampleTokenCreator.new");
   return holder.updateCreator(instance.address, { from: accounts[0]});
 }).then(function() {
     console.error("holder.updateCreator");
@@ -92,7 +96,14 @@ module.exports = function(deployer, network, accounts) {
     if(element.event==="SampleTokenBuilderCreated"){
       eventData=element;
     }
+      if(element.event==="CreatorBaseFired"){
+        console.error("base function called!");
+      }
+
   });
+  if(eventData==null){
+    console.error("Event not found!");
+  }
   tokenBuilder=SampleTokenBuilder.at(eventData.args.builder);
     console.error("tokenBuilder.setName");
   return tokenBuilder.setName("xxx",{ from: accounts[1],gasLimit:30000000});
