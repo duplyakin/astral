@@ -60,7 +60,7 @@ contract SampleTokenBuilder is iDocumentBuilder{
 
 contract SampleTokenCreator is iCreator{
   //  address lastbuilder private;
-    function SampleTokenCreator(iBaseHolder _holder, uint64 _version) public iCreator(_holder, _version) {
+    function SampleTokenCreator(BaseHolder _holder, uint64 _version) public iCreator(_holder, _version) {
     }
 
   //  event SampleTokenBuilderCreated(address _curator,address builder);
@@ -119,7 +119,7 @@ contract IncreasingPriceCrowdsale is Ownable ,iDocument,TimedCrowdsale {
 
 contract IncreasingPriceCrowdsaleCreator is iCreator{
 
-    function IncreasingPriceCrowdsaleCreator(iBaseHolder _holder, uint64 _version) public iCreator(_holder, _version) {
+    function IncreasingPriceCrowdsaleCreator(BaseHolder _holder, uint64 _version) public iCreator(_holder, _version) {
     }
 
     function createDocumentBuilder (address _curator,iCreator creator) public  returns (address _newDocumentBuilder) {

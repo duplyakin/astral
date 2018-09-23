@@ -10,7 +10,7 @@ import { default as contract } from 'truffle-contract'
 // Import our contract artifacts and turn them into usable abstractions.
 import metacoin_artifacts from '../../build/contracts/MetaCoin.json'
 import myStorage_artifacts from '../../build/contracts/Storage.json'
-import iBaseHolder_artifacts from '../../build/contracts/iBaseHolder.json'
+import BaseHolder_artifacts from '../../build/contracts/BaseHolder.json'
 
 import iCreator_artifacts from '../../build/contracts/iCreator.json'
 /*import iDocumentBuilder_artifacts from '../../build/contracts/iDocumentBuilder.json'
@@ -25,7 +25,7 @@ import IncreasingPriceCrowdsaleCreator_artifacts from '../../build/contracts/Inc
 // MetaCoin is our usable abstraction, which we'll use through the code below.
 var MetaCoin = contract(metacoin_artifacts);
 var MyStorage = contract(myStorage_artifacts);
-var iBaseHolder = contract(iBaseHolder_artifacts);
+var BaseHolder = contract(BaseHolder_artifacts);
 var iCreator = contract(iCreator_artifacts);
 /*var iDocumentBuilder = contract(iDocumentBuilder_artifacts);
 
@@ -211,7 +211,7 @@ window.App = {
     // Bootstrap the MetaCoin abstraction for Use.
     MetaCoin.setProvider(web3.currentProvider);
     MyStorage.setProvider(web3.currentProvider);
-	  iBaseHolder.setProvider(web3.currentProvider);
+	  BaseHolder.setProvider(web3.currentProvider);
 
 	  iCreator.setProvider(web3.currentProvider);
     /*iDocumentBuilder.setProvider(web3.currentProvider)

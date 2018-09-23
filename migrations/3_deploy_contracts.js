@@ -13,8 +13,8 @@ module.exports = function(deployer, network, accounts) {
 
   var safeMath= artifacts.require("SafeMath");
 /*  var zeppelinSolidity= artifacts.require("zeppelin-solidity");*/
-  var iBaseHolder = artifacts.require("iBaseHolder");
-  var icoBaseHolder = artifacts.require("iBaseHolder");
+  var BaseHolder = artifacts.require("BaseHolder");
+  var icoBaseHolder = artifacts.require("BaseHolder");
   var iCreator = artifacts.require("iCreator");
   var iDocument = artifacts.require("iDocument");
   var SampleToken = artifacts.require("SampleToken");
@@ -26,9 +26,9 @@ module.exports = function(deployer, network, accounts) {
   var IncreasingPriceCrowdsaleCreator=artifacts.require("IncreasingPriceCrowdsaleCreator");
   var IncreasingPriceCrowdsale=artifacts.require("IncreasingPriceCrowdsale");
   deployer.deploy(safeMath);
-  deployer.link(safeMath,[iVersionable,iBaseHolder,myStorage]);
+  deployer.link(safeMath,[iVersionable,BaseHolder,myStorage]);
   deployer.deploy(myStorage);
-  deployer.deploy(iBaseHolder);
+  deployer.deploy(BaseHolder);
 
   var storage,holder;
   var stc;
@@ -39,11 +39,11 @@ module.exports = function(deployer, network, accounts) {
 }).then(function(instance) {
   storage = instance;
   console.log("myStorage");
-  return iBaseHolder.deployed();
+  return BaseHolder.deployed();
 
 }).then(function(instance) {
   holder = instance;
-  console.error("iBaseHolder");
+  console.error("BaseHolder");
   return  storage.addHolder("token",holder.address);
 
 }).then(function() {
@@ -150,9 +150,9 @@ console.error("tokenBuilder.build");
 
 
 /*.then(function(instance) {
-  console.log("holder check:\n"+iBaseHolder.address+"\n"+instance);
+  console.log("holder check:\n"+BaseHolder.address+"\n"+instance);
   console.log(JSON.stringify(instance));
-  return iBaseHolder.registerDocument(accounts[1],token.address,{ from: accounts[1],gasLimit:30000000});
+  return BaseHolder.registerDocument(accounts[1],token.address,{ from: accounts[1],gasLimit:30000000});
 })*//*.then(function(instance) {
   console.log(JSON.stringify(instance));
 });*/

@@ -4,14 +4,14 @@ pragma solidity ^0.4.21;
 import "../node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol";
 
 contract iVersionable {
-    function iVersionable(   iBaseHolder _holder, uint64 _version
+    function iVersionable(   BaseHolder _holder, uint64 _version
     ) public {
         version = _version;
         holder = _holder;
       }
 
     uint64 public version;
-    iBaseHolder public holder;
+    BaseHolder public holder;
 
     function getVersion() public view returns (uint64 _version){
         _version=version;
@@ -19,18 +19,18 @@ contract iVersionable {
     function setVersion(uint64 _version) internal {
         version=_version;
     }
-    function setHolder(iBaseHolder bh) public{
+    function setHolder(BaseHolder bh) public{
         holder = bh;
     }
 
-    function getHolder() public view returns (iBaseHolder bh){
+    function getHolder() public view returns (BaseHolder bh){
         bh=holder;
     }
 }
 
 
-contract iBaseHolder{
-    function iBaseHolder()public {
+contract BaseHolder{
+    function BaseHolder()public {
         newestVersion=0;
     }
 
@@ -85,7 +85,7 @@ contract Storage is Ownable{
   function Storage() public Ownable(){
       owner=msg.sender;
   }
-  mapping (uint256 => iBaseHolder) holdersByType;
+  mapping (uint256 => BaseHolder) holdersByType;
 
   function getLatestCreatorVersion(string contractType)public view returns (uint){
     return holdersByType[ uint256(keccak256(contractType))].getLatestCreator().getVersion();
@@ -93,7 +93,7 @@ contract Storage is Ownable{
   function getLatestCreator(string contractType) public view returns (iCreator _creator){
      return holdersByType[ uint256(keccak256(contractType))].getLatestCreator();
   }
-  function addHolder(string contractType,iBaseHolder holder) public {
+  function addHolder(string contractType,BaseHolder holder) public {
      holdersByType[uint256(keccak256(contractType))]=holder;
   }
 }
@@ -136,7 +136,7 @@ contract iCreator is iVersionable, Ownable {
     event ContractBuilderCreated(address _curator,address newContract, string newContractType);
     bytes private builderAbi;
 
-    function iCreator(iBaseHolder _holder,uint64 version)public iVersionable(_holder,version){
+    function iCreator(BaseHolder _holder,uint64 version)public iVersionable(_holder,version){
         owner = msg.sender;
     }
 
@@ -175,7 +175,7 @@ contract iDocument is iVersionable {
 
 ///troubles)
     function createNewDoc(address _newOwner) internal returns (address _newDoc) {
-       iBaseHolder holder = getHolder();
+       BaseHolder holder = getHolder();
        iCreator creator = holder.getLatestCreator();
         _newDoc =creator.createDocumentBuilder(_newOwner/*,creator*/);
       //     holder.registerDocument(_newOwner, _newDoc); // не можем положим положить в holder пока не закончилась транзакция так как не знаем адрес нового контракта.
