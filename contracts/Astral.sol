@@ -30,15 +30,24 @@ contract iVersionable {
 
 
 contract BaseHolder{
+
+    struct AllUserDocsForVersion{
+      address[] creators;
+      address[] contracts;
+    }
+
     function BaseHolder()public {
         newestVersion=0;
     }
 
     mapping (uint64 => address) iCreators;
     mapping (uint64 => bytes) contractAbi;
-    mapping (uint64 => mapping (address => address)) allDocuments;
+    mapping (uint64 => bytes) creatorAbi;
+    // get all docs for a user?
+    mapping (uint64 => mapping (address => AllUserDocsForVersion)) allDocuments;
 
     uint64 private newestVersion;
+
     function updateCreator(address anotherCreator) public {
         iCreator crt = iCreator(anotherCreator);
         uint64 _creatorVersion=crt.getVersion();
@@ -47,15 +56,20 @@ contract BaseHolder{
         iCreators[_creatorVersion]=crt;
         newestVersion=_creatorVersion;
     }
-    function updateAbi(uint64 version,bytes abi) public {
 
+    function updateContractAbi(uint64 version,bytes abi) public {
         contractAbi[version]=abi;
-
     }
-    function getAbi(uint64 version) public view returns (bytes){
 
+    function getContractAbi(uint64 version) public view returns (bytes){
       return contractAbi[version];
+    }
+    function updateCreatorAbi(uint64 version,bytes abi) public {
+        creatorAbi[version]=abi;
+    }
 
+    function getCreatorAbi(uint64 version) public view returns (bytes){
+      return creatorAbi[version];
     }
 
     function getCreator(uint64 version) public view  returns (iCreator _creator){
@@ -72,7 +86,7 @@ contract BaseHolder{
         uint64 _documentVersion=document.getVersion();
         //require (_documentVersion<=newestVersion/*,'document source unspecified!'*/);
 
-        mapping (address => address) docsForVersion = allDocuments[_documentVersion];
+        mapping (address => AllUserDocsForVersion) docsForVersion = allDocuments[_documentVersion];
       //  address docExists = docsForVersion[_owner];
       //  require(docExists==address(0),'document already created!');
         docsForVersion[_owner]=document;
@@ -82,17 +96,22 @@ contract BaseHolder{
 }
 
 contract Storage is Ownable{
-  function Storage() public Ownable(){
+  constructor() public Ownable(){
       owner=msg.sender;
   }
   mapping (uint256 => BaseHolder) holdersByType;
-
+mapping (address=>{type version user// bh list?})
   function getLatestCreatorVersion(string contractType)public view returns (uint){
     return holdersByType[ uint256(keccak256(contractType))].getLatestCreator().getVersion();
   }
-  function getLatestCreator(string contractType) public view returns (iCreator _creator){
-     return holdersByType[ uint256(keccak256(contractType))].getLatestCreator();
+  ///??????
+  function getLatestCreator(string contractType) public view returns (iCreator _creator, bytes _abi){
+     BaseHolder bh =  holdersByType[ uint256(keccak256(contractType))]
+     _creator =bh.getLatestCreator();
+     _abi =bh.getCreatorAbi();
+
   }
+
   function addHolder(string contractType,BaseHolder holder) public {
      holdersByType[uint256(keccak256(contractType))]=holder;
   }
