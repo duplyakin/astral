@@ -99,15 +99,35 @@ function createSpanForCreator(element,contract){
   window.App[contract.address]={
     createDocumentBuilder: function() {
       var self = this;
-      var builderInstance;
+      var transaction;
       var BuilderAbi;
       var builderContract;
       var newContractOwner = document.getElementById(contract.address+"createDocumentBuilder_curator").value;
       concreteContract.createDocumentBuilder(newContractOwner,{from: web3.eth.defaultAccount, gasLimit:30000000})
       .then(function(dbi){
       //  console.log(JSON.stringify(dbi));
-        builderInstance=dbi;/*!!!!!!!!*/
+        transaction=dbi;/*!!!!!!!!*/
+
+        console.error(JSON.stringify(transaction));
+        var eventData;
+        builderInstance.logs.forEach(function(element) {
+          if(element.event==="IncreasingPriceCrowdsaleBuilderCreated"){
+            eventData=element;
+          }
+            if(element.event==="CreatorBaseFired"){
+              console.error("base function called!");
+            }
+
+        });
+        if(eventData==null){
+          console.error("Event not found!");
+        }
+
+        crowdsaleBuilder=IncreasingPriceCrowdsaleBuilder.at(eventData.args.builder);
+          console.error("IncreasingPriceCrowdsaleBuilder.setName");
+
         return concreteContract.getDocumentBuilderAbi({from: web3.eth.defaultAccount, gasLimit:20000000});
+
       }).then(function(dba){
         let abiAsString = hexToString(dba);
         BuilderAbi=JSON.parse(abiAsString)

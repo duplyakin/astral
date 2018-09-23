@@ -105,6 +105,9 @@ contract Storage is Ownable{
 contract iDocumentBuilder is Ownable {
   iCreator creator;
   bool isCreated;
+
+  event FinalContractCreated(address _curator,address newContract, string newContractType);
+
   constructor  (address _curator, iCreator _creator)public{
   //  transferOwnership(_curator);
   isCreated = false;
@@ -140,7 +143,10 @@ contract iDocumentBuilder is Ownable {
 // this class should be only one for contract version
 contract iCreator is iVersionable, Ownable {
 
-    event CreatorBaseFired(address _curator);
+  //  event CreatorBaseFired(address _curator);
+
+    event ContractBuilderCreated(address _curator,address newContract, string newContractType);
+
      bytes private builderAbi ;
     function iCreator(iBaseHolder _holder,uint64 version)public iVersionable(_holder,version){
         owner = msg.sender;
@@ -148,8 +154,9 @@ contract iCreator is iVersionable, Ownable {
 
     function createDocumentBuilder(address _curator ) public returns (address _newDocumentBuilder) {
 
-        emit CreatorBaseFired(_curator);
+
         _newDocumentBuilder = address(new iDocumentBuilder(_curator,this));
+        emit ContractCreated(_curator,_newDocumentBuilder,"iDocumentBuilder");
     }
     function setBuilderAbi(bytes myabi) public {
       builderAbi=myabi;
@@ -188,7 +195,7 @@ contract iDocument is iVersionable {
        iCreator creator = holder.getLatestCreator();
 
         _newDoc =creator.createDocumentBuilder(_newOwner/*,creator*/);
-      //     holder.registerDocument(_newOwner, _newDoc);
+      //     holder.registerDocument(_newOwner, _newDoc); // не можем положим положить в holder пока не закончилась транзакция так как не знаем адрес нового контракта.
     }
 
     function register() public{
