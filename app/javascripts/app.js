@@ -111,13 +111,9 @@ function createSpanForCreator(element,contract){
         console.error(JSON.stringify(transaction));
         var eventData;
         builderInstance.logs.forEach(function(element) {
-          if(element.event==="IncreasingPriceCrowdsaleBuilderCreated"){
+          if(element.event==="ContractBuilderCreated"){
             eventData=element;
           }
-            if(element.event==="CreatorBaseFired"){
-              console.error("base function called!");
-            }
-
         });
         if(eventData==null){
           console.error("Event not found!");

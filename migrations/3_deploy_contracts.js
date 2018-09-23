@@ -93,18 +93,14 @@ console.error("SampleTokenCreator.new");
   console.error(JSON.stringify(instance));
   var eventData;
   instance.logs.forEach(function(element){
-    if(element.event==="SampleTokenBuilderCreated"){
+    if(element.event==="ContractBuilderCreated"){
       eventData=element;
     }
-      if(element.event==="CreatorBaseFired"){
-        console.error("base function called!");
-      }
-
   });
   if(eventData==null){
     console.error("Event not found!");
   }
-  tokenBuilder=SampleTokenBuilder.at(eventData.args.builder);
+  tokenBuilder=SampleTokenBuilder.at(eventData.args.newContract);
     console.error("tokenBuilder.setName");
   return tokenBuilder.setName("xxx",{ from: accounts[1],gasLimit:30000000});
 
@@ -124,22 +120,42 @@ console.error("tokenBuilder.build");
     console.error(JSON.stringify(instance));
   var eventData;
   instance.logs.forEach(function(element){
-    if(element.event==="SampleTokenCreated"){
+    if(element.event==="FinalContractCreated"){
       eventData=element;
     }
   });
-    token=SampleToken.at(eventData.args.token);
-
-//  token=SampleToken.at(instance);
-  return token.getHolder();
+  if(eventData==null){
+    console.error("Event FinalContractCreated not found!");
+  }
+  token=SampleToken.at(eventData.args.newContract);
+  return token;
   console.log(instance);
-})/*.then(function(instance) {
+}).then(function(instance) {
+  console.log("want same contract");
+  return instance.wantSameContract(accounts[0]);
+}).then(function(instance) {
+    console.error(JSON.stringify(instance));
+  var eventData;
+  instance.logs.forEach(function(element){
+    if(element.event==="ContractBuilderCreated"){
+      eventData=element;
+    }
+  });
+  if(eventData==null){
+    console.error("Event ContractBuilderCreated not found!");
+  }
+
+  console.log(instance);
+});
+
+
+/*.then(function(instance) {
   console.log("holder check:\n"+iBaseHolder.address+"\n"+instance);
   console.log(JSON.stringify(instance));
   return iBaseHolder.registerDocument(accounts[1],token.address,{ from: accounts[1],gasLimit:30000000});
-})*/.then(function(instance) {
+})*//*.then(function(instance) {
   console.log(JSON.stringify(instance));
-});
+});*/
 
 
 

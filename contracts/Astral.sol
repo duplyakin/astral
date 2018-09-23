@@ -4,7 +4,6 @@ pragma solidity ^0.4.21;
 import "../node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol";
 
 contract iVersionable {
-
     function iVersionable(   iBaseHolder _holder, uint64 _version
     ) public {
         version = _version;
@@ -13,7 +12,6 @@ contract iVersionable {
 
     uint64 public version;
     iBaseHolder public holder;
-
 
     function getVersion() public view returns (uint64 _version){
         _version=version;
@@ -28,7 +26,6 @@ contract iVersionable {
     function getHolder() public view returns (iBaseHolder bh){
         bh=holder;
     }
-
 }
 
 
@@ -124,39 +121,28 @@ contract iDocumentBuilder is Ownable {
        _;
        isCreated=true;
   }
-
   /*modifier mustBeRegistered(){
     creator.getHolder().
     _;
   }*/
 
-
   function build() public onlyOwner whileNotCreated setCreatedOnSuccess returns (iDocument doc) {
     return new iDocument(owner, creator);
   }
-
-
-
-
-
 }
+
 // this class should be only one for contract version
 contract iCreator is iVersionable, Ownable {
-
-  //  event CreatorBaseFired(address _curator);
-
     event ContractBuilderCreated(address _curator,address newContract, string newContractType);
+    bytes private builderAbi;
 
-     bytes private builderAbi ;
     function iCreator(iBaseHolder _holder,uint64 version)public iVersionable(_holder,version){
         owner = msg.sender;
     }
 
     function createDocumentBuilder(address _curator ) public returns (address _newDocumentBuilder) {
-
-
         _newDocumentBuilder = address(new iDocumentBuilder(_curator,this));
-        emit ContractCreated(_curator,_newDocumentBuilder,"iDocumentBuilder");
+        emit ContractBuilderCreated(_curator,_newDocumentBuilder,"iDocumentBuilder");
     }
     function setBuilderAbi(bytes myabi) public {
       builderAbi=myabi;
@@ -180,20 +166,17 @@ contract iDocument is iVersionable {
     }
 
     function wantSameContract(  address _newOwner) public returns (address _newDoc) {
-
             _newDoc = createNewDoc(_newOwner);
-
     }
 
     function getOwner() public view returns  (address _owner){
         _owner=owner;
     }
 
+///troubles)
     function createNewDoc(address _newOwner) internal returns (address _newDoc) {
        iBaseHolder holder = getHolder();
-
        iCreator creator = holder.getLatestCreator();
-
         _newDoc =creator.createDocumentBuilder(_newOwner/*,creator*/);
       //     holder.registerDocument(_newOwner, _newDoc); // не можем положим положить в holder пока не закончилась транзакция так как не знаем адрес нового контракта.
     }
